@@ -11,7 +11,7 @@ func main() {
 	//1.定义map,int为key类型，string为值类型
 	var s1 map[int]string
 	//2.map定义之后还需要分配内存空间来进行初始化，类似于java中的new操作
-	//3.如果不进行初始化，则s1为空
+	//3.如果不进行初始化，则s1为空,如果此时往map中添加元素，则会报错
 	fmt.Println(s1 == nil) //true
 	//4.map为引用类型，所以使用make来分配内存空间进行初始化
 	s1 = make(map[int]string, 10) //5.第一个参数为map类型，第二个参数为map容量，超出容量会动态扩容

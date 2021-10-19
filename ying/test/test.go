@@ -1,7 +1,11 @@
-package test
+package main
 
 import "fmt"
 
-func Test() {
-	fmt.Println("this is package test!")
+func main() {
+	var maptest map[int]string
+	maptest = make(map[int]string)
+	maptest[0] = "郑晓颖"
+	fmt.Println(maptest)
+
 }
