@@ -1,3 +1,3 @@
-module githup.com
+module go-test
 
 go 1.16

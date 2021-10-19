@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3171a18b-166c-4b35-98ee-ed0b5b9cf5c1" name="Default Changelist" comment="1">
-      <change afterPath="$PROJECT_DIR$/AAA.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ying/ioutil/IOUtilTest.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ying/os/CopyFile.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ying/os/FileReading.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ying/test/test.go" afterDir="false" />
+    <list default="true" id="3171a18b-166c-4b35-98ee-ed0b5b9cf5c1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/ying/error/ErrorMsg.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AAA.txt" beforeDir="false" afterPath="$PROJECT_DIR$/AAA.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ying/os/FileReading.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/os/FileReading.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,20 +14,34 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
   <component name="GOROOT" path="E:\software\Environments\Go 1.16.6" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1zV013ITkCA6AnfcORkIP8ZtHCW" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="GO_FMT" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
+    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="settings.github" />
+    <property name="settings.editor.selected.configurable" value="go.vgo" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -47,7 +60,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build IOUtilTest.go">
+  <component name="RunManager" selected="Go Build.go build FileReading.go">
     <configuration name="go build FileReading.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go-test" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -74,9 +87,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build FileReading.go" />
         <item itemvalue="Go Build.go build IOUtilTest.go" />
         <item itemvalue="Go Build.go build if.go" />
-        <item itemvalue="Go Build.go build FileReading.go" />
       </list>
     </recent_temporary>
   </component>
@@ -88,7 +101,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
@@ -97,5 +112,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="1" />
     <option name="LAST_COMMIT_MESSAGE" value="1" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+    <proxy>https://goproxy.cn</proxy>
   </component>
 </project>
