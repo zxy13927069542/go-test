@@ -4,7 +4,6 @@
     <list default="true" id="f14b5bcf-60bf-4547-b8b2-01fd03cda448" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ying/map/map.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/map/map.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ying/test/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/test/test.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

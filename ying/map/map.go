@@ -8,18 +8,20 @@ import (
 )
 
 func main() {
-	//1.定义map,int为key类型，string为值类型
+	//定义map,int为key类型，string为值类型
 	var s1 map[int]string
-	//2.map定义之后还需要分配内存空间来进行初始化，类似于java中的new操作
-	//3.如果不进行初始化，则s1为空,如果此时往map中添加元素，则会报错
+
+	//map为引用类型，如果不进行初始化则为空，即nil，如果不进行初始化就往map中添加元素，则会报错
 	fmt.Println(s1 == nil) //true
-	//4.map为引用类型，所以使用make来分配内存空间进行初始化
-	s1 = make(map[int]string, 10) //5.第一个参数为map类型，第二个参数为map容量，超出容量会动态扩容
-	//6.初始化之后即可为往map中存储元素
+
+	//所以map定义之后还需要分配内存空间来进行初始化，类似于java中的new操作，所以使用make来分配内存空间进行初始化
+	s1 = make(map[int]string, 10) //第一个参数为map类型，第二个参数为map容量，超出容量会动态扩容
+
+	//初始化之后即可为往map中存储元素
 	s1[3] = "李华"
 	fmt.Println(s1)
 
-	//1.根据key获取value
+	//根据key获取value
 	v1 := s1[3]
 	fmt.Println(v1)
 
@@ -73,7 +75,7 @@ func main() {
 //将map中的元素按序打印
 func printOrderly(s2 map[string]int) {
 	//1.初始化一个容量为s2长度的切片
-	s3 := make([]string, 0, len((s2)))
+	s3 := make([]string, 0, len(s2))
 	//2.遍历s2，将key存入切片中
 	for k := range s2 {
 		s3 = append(s3, k)
