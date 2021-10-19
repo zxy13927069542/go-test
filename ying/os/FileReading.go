@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-test/ying/error"
 	"io"
 	"os"
 )
@@ -15,15 +16,17 @@ func main() {
 
 	//调用写文件操作
 	Write()
+	//调用文件读操作
+	//Read()
 	//调用文件复制函数
-	CopyFile("./AAA.txt", "./BBB.txt")
+	//CopyFile("./AAA.txt", "./BBB.txt")
 
 }
 
 func Read() {
 	file, err := os.Open("./AAA.txt")
 	if err != nil {
-		fmt.Println("文件打开失败，错误原因为：", err)
+		error.ErrorMsg("打开文件失败！", err)
 	}
 	defer file.Close()
 	//接受文件内容的缓冲切片
@@ -43,24 +46,33 @@ func Read() {
 	}
 	fmt.Println(string(contend))
 
-	////文件内部读取存在一个光标，指示当前读取到文件的哪里，如果文件读完后再次进行读取则会报错，err = io.EOF
-	//n,err := file.Read(buff)
+	////文件内部读取存在一个光标，指示当前读取到文件的哪里，如果文件读完后再次进行读取则会报错，error = io.EOF
+	//n,error := file.Read(buff)
 	//fmt.Println(string(buff[:n]))
-	//_,err = file.Read(buff)
-	//if err == io.EOF {
+	//_,error = file.Read(buff)
+	//if error == io.EOF {
 	//	fmt.Println("文件读完了！")
 	//	return
 }
 
+//在AAA.txt文件写10行内容，写方式为覆盖写，写之前会清空文件内容
 func Write() {
 	//使用权限打开文件，使文件拥有读写相关的权限
-	file, err := os.OpenFile("./AAA.txt", os.O_WRONLY|os.O_APPEND, 777)
+	//os.O_TRUNC 清空
+	//os.O_WRONLY 写权限
+	file, err := os.OpenFile("./AAA.txt", os.O_WRONLY|os.O_TRUNC, 777)
 	if err != nil {
-		fmt.Println("ERROR! 打开文件错误！错误类型为：", err)
-		return
+		error.ErrorMsg("打开文件失败！", err)
+
 	}
 	defer file.Close()
 	//默认直接从第一个字节开始写，如果文件有内容会被替换
 	//os.O_APPEND 追加在已有内容之后
-	file.Write([]byte("我是大人莫"))
+
+	for i := 0; i < 10; i++ {
+		_, err := file.WriteString("this is FileReadingTest.Write!\n")
+		if err != nil {
+			error.ErrorMsg("写文件失败！", err)
+		}
+	}
 }
