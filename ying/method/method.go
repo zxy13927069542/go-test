@@ -1,46 +1,29 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
-type Address struct {
-	province string
-	city     string
-}
-
-type Person struct {
-	name    string
-	age     int
-	address Address
-}
-
-//嵌套匿名结构体
-type Person1 struct {
-	name string
-	age  int
-	Address
+type Student struct {
+	//指定id作为json键值即key
+	ID int `json:"id"`
+	//key默认与字段名一致
+	Name string
+	//私有字段无法被json读取，因为私有属性在相同包内被访问
+	gender string
 }
 
 func main() {
-	person := &Person{
-		name: "郑晓颖",
-		age:  22,
-		address: Address{
-			province: "广东",
-			city:     "珠海",
-		},
+	stu := &Student{
+		ID:     3,
+		Name:   "郑晓颖",
+		gender: "男",
 	}
-	fmt.Printf("%v\n", person.address.province)
-
-	//嵌套匿名结构体
-	person1 := &Person1{
-		//同一层次的字段实例化时，要么全部匿名，要么全部不匿名，否则会报错
-		"郑晓颖",
-		22,
-		Address{
-			province: "广东",
-			city:     "珠海",
-		},
+	data, err := json.Marshal(stu)
+	if err != nil {
+		fmt.Printf("序列化错误,错误原因为: %v\n", err)
+		return
 	}
-	fmt.Printf("%v\n", person1.Address.province)
-	fmt.Printf("%v\n", person1.city)
+	fmt.Printf("%s\n", data)
 }
