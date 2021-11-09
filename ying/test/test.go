@@ -1,11 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	calc "go-test/ying/package"
+)
 
+//main函数
 func main() {
-	var maptest map[int]string
-	maptest = make(map[int]string)
-	maptest[0] = "郑晓颖"
-	fmt.Println(maptest)
-
+	calc.Reduce(3, 4)
+	fmt.Println("AAA")
 }

@@ -3,31 +3,6 @@ package main
 import "fmt"
 
 func main() {
-	//定义一个切片
-	s1 := []int{1, 2}
-	//往切片追加元素
-	// s1[2] = 3	//失败
-	fmt.Println(s1)
-
-	//切片为引用类型，未初始化的切片为nil，相当于null
-	var s2 []int
-	fmt.Println(s2)                                    //[]
-	fmt.Println(s2 == nil)                             //true
-	fmt.Printf("s2的长度为:%d,容量为:%d\n", len(s2), cap(s2)) //s2的长度为:0,容量为:0
-	//初始化过的切片不为nil，即使长度与容量均为0
-	s6 := []int{}
-	fmt.Println(s6 == nil) //false
-
-	//由数组得到切片
-	s3 := [...]int{3, 3, 3}
-	s4 := s3[:]
-	s4[0] = 1 //数组相应的值也会发生变化
-	fmt.Println(s3, s4)
-
-	//make函数
-	//可以指定切片的类型，长度，容量
-	s5 := make([]int, 5, 10) //s5的类型为[]int，长度为5，容量为10
-	fmt.Printf("s5的类型为:%T,长度为:%d,容量为:%d,值为:%v\n", s5, len(s5), cap(s5), s5)
 
 	//切片扩容
 	//容量不够情况下直接追加元素 索引越界

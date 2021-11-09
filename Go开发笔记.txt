@@ -1,0 +1,1132 @@
+### 常用命令
+
+#### go build
+
+`go build test.go`会在当前目录下生成`test.exe`可执行文件
+
+
+
+#### go clean
+
+在指定目录下执行`go clean`，可以删除编译生成的可执行文件1
+
+
+
+#### go run
+
+`go run`不会在运行目录下生成任何文件，可执行文件被放在临时文件中被执行
+
+
+
+#### go fmt
+
+`go fmt 文件名或包名`可以格式化代码
+
+
+
+#### godoc
+
+
+
+##### 下载godoc
+
+`godoc`在go1.13后需要自己下载
+
+```go
+//启用go module
+go env -w GO111MODULE=on
+
+//配置 GOPROXY 选一个就行
+//阿里云
+go env -w GOPROXY=https://mirrors.aliyun.com/goproxy/,direct # 
+//官方
+go env -w GOPROXY=https://goproxy.io,direct
+
+//下载go doc
+go get golang.org/x/tools/cmd/godoc
+```
+
+
+
+##### 使用godoc
+
+使用`godoc -http=:6060`命令即可开启文档服务器，访问`http://localhost:6060`即可看到
+
+
+
+#### go mod init 项目名
+
+
+
+### 包
+
+- 每个包都在相同的目录，不能把多个包放在相同的目录，也不能把同一个包的文件拆到多个不同的目录，同一目录下的所有go代码文件都必须同属一个包
+- 包名全小写，惯例为目录名
+- main包中的main函数为程序入口，生成的可执行文件名为main包所在目录
+
+
+
+#### 命名导入
+
+```go
+import calc "go-test/ying/package"
+
+func main() {
+	calc.Reduce(3,4)
+}
+```
+
+
+
+#### 匿名导入
+
+```go
+import _ "go-test/ying/package"
+```
+
+> **当想导入一个不在代码中使用的包时，可以使用空白标识符`_`来匿名导包从而不报错**
+
+
+
+### Delve
+
+- ```
+  Goland Debug报错:
+  	Version of Delve is too old for this version of Go (maximum supported version 1.12, suppress this error with --check-go-version=false)
+  	即Delve版本过旧或者压根没有Deve
+  ```
+
+  - 解决措施：下载一个高版本或新的Delve,并在goland中配置其路径
+
+    1. ```
+       go get -u github.com/go-delve/delve/cmd/dlv	//下载dlv到本地
+       ```
+
+    2. 用everything搜索delve.exe找到其路径，并克隆到Go安装路径的bin目录下
+
+    3. 打开 `Hele->Edit Customer Properties`,若提示文件不存在，点击创建。然后在新加一行 
+
+       ```
+       dlv.path=Go的安装路径/bin/dlv.exe
+       ```
+
+        重启就可以了
+
+## map使用及知识点
+
+```go
+	//定义map,int为key类型，string为值类型
+	var s1 map[int]string
+
+	//map为引用类型，如果不进行初始化则为空，即nil，如果不进行初始化就往map中添加元素，则会报错
+	fmt.Println(s1 == nil) //true
+
+	//所以map定义之后还需要分配内存空间来进行初始化，类似于java中的new操作，所以使用make来分配内存空间进行初始化
+	s1 = make(map[int]string, 10) //第一个参数为map类型，第二个参数为map容量，超出容量会动态扩容
+
+	//初始化之后即可为往map中存储元素
+	s1[3] = "李华"
+	fmt.Println(s1)
+
+	//根据key获取value
+	v1 := s1[3]
+	fmt.Println(v1)
+
+	//判断key是否存在并返回value
+	v2, ok := s1[4]
+	if ok {
+		fmt.Println(v2)
+	} else {
+		fmt.Println("key不存在")
+		//string不是引用类型，空值不是nil，而是""这样一个空字符串
+		fmt.Printf("value类型为:%T,是否为空:%v,值为:%v\n", v2, v2 == "", v2)
+	}
+
+	//map的遍历
+	//map中元素无序，无法用普通for循环遍历，需要使用for range遍历
+	for k3, v3 := range s1 {
+		fmt.Println(k3, v3)
+	}
+	//只遍历key
+	for k4 := range s1 {
+		fmt.Println(k4)
+	}
+	//只遍历value
+	for _, v5 := range s1 {
+		fmt.Println(v5)
+	}
+
+	//删除键值对
+	//func delete(m map[Type]Type1, key Type)
+	//内置函数delete按照指定的键将元素从映射中删除。若m为nil或无此元素，delete不进行操作。
+	delete(s1, 3)
+	fmt.Println(s1)
+
+	//测试printOrderly函数
+	//初始化随机数种子
+	rand.Seed(time.Now().UnixNano())
+	//初始化map
+	s2 := make(map[string]int, 20)
+	//往map中填充元素
+	var key string //将key与value放在for循环外避免重复定义
+	var value int
+	for i := 0; i < 20; i++ {
+		key = fmt.Sprintf("第%02d", i) // %02d : 不足两位的整数用0补足，超出或等于两位的整数正常输出
+		value = rand.Intn(20)         //生产0~19的整数
+		s2[key] = value
+	}
+	//调用printOrderly函数
+	printOrderly(s2)
+}
+
+//将map中的元素按序打印
+func printOrderly(s2 map[string]int) {
+	//初始化一个容量为s2长度的切片
+	s3 := make([]string, 0, len(s2))
+	//遍历s2，将key存入切片中
+	for k := range s2 {
+		s3 = append(s3, k)
+	}
+	//为切片中的key排序
+	sort.Strings(s3)
+	//输出
+	for _, v := range s3 {
+		fmt.Println(v, s2[v])
+	}
+
+}
+```
+
+
+
+
+
+## 数组
+
+- 在Go语言中，数组从声明时就确定，使用时可以修改数组成员，但是**数组大小不可变化**
+- 数组为值类型
+
+
+
+### 数组定义
+
+```go
+var s1 [3]int
+var s2 [4]int
+fmt.Printf("s1的类型为%T\n", s1) //s1的类型为[3]int
+fmt.Printf("s2的类型为%T\n", s2) //s2的类型为[4]int
+fmt.Printf("%v\n", s1)	//[0 0 0]
+fmt.Printf("%v\n", s2)	//[0 0 0 0]
+```
+
+> **数组的长度为类型的一部分，长度不同，即使是同一数据类型的数组类型也不同**
+
+
+
+### 数组初始化
+
+```go
+//数组初始化
+
+//第一种
+var s3 [3]int = [3]int{1, 1, 1}
+fmt.Println(s3)
+
+//第二种
+s4 := [3]int{1, 1, 1}
+fmt.Println(s4)
+
+//第三种
+s5 := [...]int{1, 1, 1}
+fmt.Printf("s5的类型为%T\n值为%v\n", s5, s5) //类型为[3]int
+
+//与第三种区分，这种初始化方式是切片，不是数组
+s6 := []int{1, 1, 1}
+fmt.Printf("s6的类型为%T\n值为%v\n", s6, s6) //类型为[]int,切片，长度可变
+
+//第四种
+s7 := [5]int{0: 1, 4: 3}               //根据索引来进行初始化
+fmt.Printf("s7的类型为%T\n值为%v\n", s7, s7) //[1 0 0 0 3]
+```
+
+
+
+### 数据遍历
+
+- 普通for循环
+
+  ```go
+  s8 := [...]int{3, 4, 5, 6}
+  //普通for循环
+  for i := 0; i < len(s8); i++ {	
+      fmt.Println(s8[i])
+  }
+  ```
+
+  > 可以使用内置函数`len`来获取数组长度
+
+- for range循环
+
+  ```go
+  s8 := [...]int{3, 4, 5, 6}
+  //for range循环
+  for i1, v1 := range s8 {
+      fmt.Printf("\n索引为%v的值为%v\n", i1, v1)
+  }
+  ```
+
+  > for index, value := range s8
+
+
+
+### 二维数组
+
+```go
+arr := [3][2]string{
+    {"数学", "语文"},
+    {"篮球", "足球"},
+    {"画画", "唱歌"},
+}
+fmt.Printf("%v\n",arr)	//[[数学 语文] [篮球 足球] [画画 唱歌]]
+
+//使用普通for循环遍历
+for i := 0; i < len(arr); i++ {
+    for y := 0; y < len(arr[i]); y++ {
+        fmt.Println(arr[i][y])
+    }
+}
+
+//使用for range遍历
+for _, v := range arr {
+    for _, v1 := range v {
+        fmt.Println(v1)
+    }
+}
+```
+
+
+
+### 数组的复制
+
+因为数组是值类型，所以数组可以像一个值一样赋值给类型相同的数组
+
+```go
+arr1 := [3]string {"李宁", "塞班", "鸿星尔克"}
+var arr2 [3]string
+arr2 = arr1
+fmt.Printf("%p\n",&arr1)	//0xc00007c390
+fmt.Printf("%p\n",&arr2)	//0xc00007c3c0
+arr2[0] = "白雨"
+fmt.Println(arr1)	//[李宁 塞班 鸿星尔克]
+fmt.Println(arr2)	//[白雨 塞班 鸿星尔克]
+```
+
+> **使用%p可以输出变量的地址，可以看到arr1与arr2的变量地址不一样**
+>
+> **修改arr2后，arr1并没有改变**
+
+
+
+### 在函数间传递数组
+
+**根据内存和性能来看，在函数间传递数组是一件开销很大的操作。在函数间传递变量时，总是以值的方式传递的，所以对于数组来说，一般是使用指针来进行数组的传递**
+
+```go
+var arr1 [300]int
+func foo(arr *[300]int)
+foo(&arr1)
+```
+
+
+
+## 切片
+
+- 切片（Slice）是一个拥有相同类型元素的可变长度的序列。它是基于数组类型做的一层封装。它非常灵活，支持自动扩容。
+
+- 切片是一个**引用类型**，它的内部结构包含`地址`、`长度`和`容量`
+- 切片的类型不像数组一样与长度挂钩，例如`var arr []int`,则切片的类型为`[]int`
+
+
+
+### 切片定义
+
+```go
+//切片为引用类型，未初始化的切片为nil，相当于null
+var s2 []int
+fmt.Println(s2)	//[]
+fmt.Println(s2 == nil)	//true
+fmt.Printf("s2的长度为:%d,容量为:%d\n", len(s2), cap(s2)) //s2的长度为:0,容量为:0
+s2[0] = 1	//未初始化的切片无法赋值，会报错
+var s3 []int
+fmt.Println(s2 == s3)	//会报错
+```
+
+> **对于引用类型来说，其零值就是nil，另外，切片之间不支持直接比较**
+>
+> **可以使用内置函数`len`来获取切片的元素个数**
+>
+> **可以使用内置函数`cap`来获取切片的容量，超过容量切片便会自动扩容**
+>
+> **未初始化的切片无法赋值，会报错**
+
+
+
+### 切片的初始化
+
+- 直接初始化
+
+  ```go
+  //定义一个切片
+  s1 := []int{1, 2}
+  //修改切片
+  s1[0] = 0
+  fmt.Println(s1)
+  fmt.Printf("s1的长度为:%d,容量为:%d\n", len(s1), cap(s1)) //s1的长度为:2,容量为:2
+  fmt.Println(s1 == nil)	//false
+  
+  //初始化过的切片不为nil，即使长度与容量均为0
+  s6 := []int{}
+  fmt.Printf("s6的长度为:%d,容量为:%d\n", len(s6), cap(s6)) //s6的长度为:0,容量为:0
+  fmt.Println(s6 == nil) //false
+  ```
+
+  > **直接初始化的切片长度与容量默认相等**
+  >
+  > **初始化过的切片不为nil，即使长度与容量均为0**
+
+- 使用make初始化
+
+  `make函数`可以指定切片的长度，容量
+
+  ```go
+  s5 := make([]int, 5, 10) //s5的类型为[]int，长度为5，容量为10
+  fmt.Printf("值为:%v\n",s5)	//[0 0 0 0 0]
+  ```
+
+- 由数组得到切片
+
+  ```go
+  //由数组得到切片
+  s3 := [...]int{3, 3, 3}
+  s4 := s3[:]
+  s4[0] = 1 //数组相应的值也会发生变化
+  fmt.Println(s3, s4)
+  ```
+
+
+
+### 切片表达式
+
+```go
+s4 := s3[a:b]	//从数组中截取(a,b]的段落作为切片的值
+s4 := s3[a:]	//截取从下标a开始的数组段落
+s4 := s3[:b]	//从头截取数组段落直到数组下标b
+s4 := s3[:]		//截取数组的全部
+```
+
+
+
+### 切片的长度
+
+切片长度是指当前切片中有多少个元素，可以用`len(s1)`获取
+
+
+
+### 切片的容量
+
+切片的容量指当前切片最多能存储多少个元素，当容量不足时会自动扩容，容量可以用`cap(s1)`获取
+
+
+
+### 切片的本质
+
+切片的本质就是对底层数组的封装，它包含了三个信息：底层数组的指针、切片的长度（len）和切片的容量（cap）。
+
+举个例子，现在有一个数组`a := [8]int{0, 1, 2, 3, 4, 5, 6, 7}`，切片`s1 := a[:5]`，相应示意图如下。![slice_01](https://www.liwenzhou.com/images/Go/slice/slice_01.png)切片`s2 := a[3:6]`，相应示意图如下：![slice_02](https://www.liwenzhou.com/images/Go/slice/slice_02.png)
+
+
+
+## type关键字
+
+自定义类型或者别名或者结构体
+
+
+
+### 自定义类型
+
+#### 基于内置的基本类型定义
+
+语法：**`type typeName 数据类型`**
+
+```go
+//自定义类型:编译后仍然有效
+type myInt int
+var a myInt = 100
+fmt.Printf("%T\n", a) //main.myInt
+```
+
+> 输出类型为`main.myInt`,表示该类型是在main包下定义的
+
+
+
+
+
+#### 类型别名
+
+类型别名是`Go1.9`版本添加的新功能
+
+语法：**`type typeName = 数据类型`**
+
+```go
+//类型别名:仅在编译时有效，例如字符类型rune是int32的别名
+type yourInt = int
+var b yourInt = 100
+fmt.Printf("%T\n", b) //int
+```
+
+> 输出类型为`int`,表示`yourInt`别名在编译后已经无效了
+
+
+
+
+
+#### 结构体
+
+使用`type`和`struct`关键字来定义结构体，**结构体为值类型**
+
+语法：
+
+```go
+type 类型名 struct {
+    字段名 字段类型
+    字段名 字段类型
+    …
+}
+```
+
+- 类型名：标识自定义结构体的名称，在同一个包内不能重复。
+- 字段名：表示结构体字段名。结构体中的字段名必须唯一。
+- 字段类型：表示结构体字段的具体类型。
+
+示例：自定义Person类型
+
+```go
+type Person struct {
+	name  string
+	age   int
+	sex   string
+	hobby []string
+}
+```
+
+> 结构体中字段大写开头表示可公开访问，小写表示私有（仅在定义当前结构体的包中可访问）
+
+
+
+##### 结构体的实例化
+
+- 基本实例化
+
+  ```go
+  var p Person
+  //未赋值时结构体中的属性都为对应的零值
+  fmt.Println(p) //{ 0  []}
+  fmt.Printf("p的类型为: %T\n", p)	//p的类型为: main.Person
+  p.name = "郑晓颖"
+  p.age = 12
+  p.sex = "男"
+  p.hobby = []string{"打篮球", "打足球"}
+  fmt.Println(p)	//{郑晓颖 12 男 [打篮球 打足球]}
+  ```
+
+- 使用**new**来进行实例化
+
+  ```go
+  p1 := new(Person)             		//返回结构体的地址，p1为指针类型
+  fmt.Printf("%v\n",p1)						//&{ 0  []},各项属性取值亦为各自数据类型的零值
+  fmt.Printf("p1的类型为：%T\n", p1) 	 //p1的类型为：*main.Person
+  p1.age = 12
+  p1.hobby = []string{"打球"}
+  p1.name = "郑晓颖"
+  p1.sex = "男"
+  fmt.Println(p1) //&{郑晓颖 12 男 [打球]}
+  ```
+
+- 使用匿名结构体来进行实例化
+
+  ```go
+  var boy struct {
+  name string
+  age  int
+  }
+  fmt.Printf("boy的类型为: %T\n", boy)	//boy的类型为: struct { name string; age int }
+  fmt.Printf("%v\n",boy)				  //{ 0}
+  p2.age = 12
+  p2.hobby = []string{"打球"}
+  p2.name = "郑晓颖"
+  p2.sex = "男"
+  fmt.Println(p2) //&{郑晓颖 12 男 [打球]}
+  ```
+
+- 使用&取地址符来进行实例化，相当于new操作
+
+  ```go
+  p2 := &Person{}
+  fmt.Printf("%v\n",p2)			  //&{ 0  []}
+  fmt.Printf("p2的类型为：%T\n", p2) //p2的类型为：*main.Person
+  p2.age = 12
+  p2.hobby = []string{"打球"}
+  p2.name = "郑晓颖"
+  p2.sex = "男"
+  fmt.Println(p2) //&{郑晓颖 12 男 [打球]}
+  ```
+
+- 使用键值对来进行实例化
+
+  ```go
+  p3 := Person{
+      age:   16,
+      name:  "p3",
+      hobby: []string{"打篮球"},
+      sex:   "男",
+  }
+  fmt.Printf("%v\n",p3)			  //{p3 16 男 [打篮球]}
+  fmt.Printf("p3的类型为：%T\n", p3) //p3的类型为：main.Person
+  ```
+
+- 当某些字段不需要赋值时，可以不写
+
+  ```go
+  p4 := Person{
+      age:   16,
+  }
+  fmt.Printf("%#v\n",p4)			  //{ 16  []}
+  fmt.Printf("p4的类型为：%T\n", p4) //p4的类型为：main.Person
+  ```
+
+- 不写字段名
+
+  ```go
+  p4 := Person{
+      "p4",
+      16,
+      "男",
+      []string{"打篮球"},
+  }
+  fmt.Printf("%v\n",p4)			  //{p4 16 男 [打篮球]}
+  fmt.Printf("p4的类型为：%T\n", p4) //p4的类型为：main.Person
+  ```
+
+  使用这种格式初始化时，需要注意：
+
+  1. 必须初始化结构体的所有字段。
+  2. 初始值的填充顺序必须与字段在结构体中的声明顺序一致。
+  3. 该方式不能和键值初始化方式混用。
+
+> 无论使用哪种实例化方式，只要结构体的属性未被赋值，则其默认值为各自数据类型的零值
+
+> 假设p为指针类型，**`p.age`** 在底层实际是**`(*p).age`**，这是Go实现的语法糖
+
+
+
+##### 结构体构造函数
+
+```go
+type Person struct {
+	name string
+	age int
+	sex string
+	hobbys []string
+}
+
+func newPerson(name, sex string, age int, hobbys []string) *Person {
+	return &Person {
+		name: name,
+		age: age,
+		sex: sex,
+		hobbys: hobbys,
+	}
+}
+
+func main () {
+	person := newPerson("郑晓颖","男", 22, []string{"游泳", "跑步"})
+	fmt.Printf("%#v\n", person)
+}
+```
+
+
+
+##### 结构体面试题
+
+```go
+type student struct {
+	name string
+	age  int
+}
+
+func main() {
+	m := make(map[string]*student)
+	stus := []student{
+		{name: "小王子", age: 18},
+		{name: "娜扎", age: 23},
+		{name: "大王八", age: 9000},
+	}
+
+	for _, stu := range stus {
+		m[stu.name] = &stu
+	}
+	for k, v := range m {
+		fmt.Println(k, "=>", v.name)
+	}
+    //	娜扎 => 大王八
+    //	大王八 => 大王八
+    //	小王子 => 大王八
+}
+```
+
+
+
+##### 结构体的匿名字段
+
+> 结构体允许其成员字段在声明时没有字段名而只有类型，这种没有名字的字段就称为匿名字段
+
+```go
+type Person struct {
+	int
+	string
+}
+
+func main() {
+	p1 := &Person {
+		22,
+		"郑晓颖",
+	}
+	fmt.Printf("%#v\n",p1)
+	fmt.Printf("p1.int:%d,p1.string:%s\n",p1.int,p1.string)
+}
+```
+
+> 匿名字段会采用字段数据类型作为字段名，结构体要求字段名唯一，因此每一种数据类型只能有一个字段
+
+
+
+##### 结构体嵌套
+
+> 一个结构体中可以嵌套包含另一个结构体或结构体指针
+
+```go
+type Address struct {
+	province string
+	city	 string
+}
+
+//普通嵌套结构体
+type Person struct {
+	name string
+	age  int
+	address Address
+}
+
+//嵌套匿名结构体
+type Person1 struct {
+	name string
+	age int
+	Address
+}
+
+func main() {
+	person := &Person {
+		name: "郑晓颖",
+		age:   22,
+		address:Address {
+			province: "广东",
+			city:     "珠海",
+		},
+	}
+	fmt.Printf("%v\n",person.address.province)	//无法使用`person.province`调用province，会报错
+
+	//嵌套匿名结构体
+	person1 := &Person1 {
+		//同一层次的字段实例化时，要么全部匿名，要么全部不匿名，否则会报错
+		"郑晓颖",
+		22,
+		Address {
+			province: "广东",
+			city:     "珠海",
+		},
+	}
+	fmt.Printf("%v\n", person1.Address.province)
+    fmt.Printf("%v\n", person1.city)	//匿名字段可以省略
+}
+```
+
+> **对于非匿名的结构体字段，不可以省略结构体名**
+>
+> **对于匿名的结构体字段，则可以省略结构体名**
+>
+> **同一层次的字段实例化时，要么全部匿名，要么全部不匿名，否则会报错**
+
+
+
+##### 嵌套结构体的字段名冲突
+
+```go
+type Address struct {
+	province string
+	city string
+	createTime string
+}
+
+type Email struct {
+	accout string
+	createTime string
+}
+
+type User struct {
+	name string
+	gender string
+	//两个有重名字段的匿名结构体
+	Address
+	Email
+}
+
+func main() {
+	user := &User {
+		name: "郑晓颖",
+		gender: "男",
+		Address: Address{
+			province: "广东省",
+			city: "珠海市",
+			createTime: "2021-11-08",
+		},
+		Email: Email{
+			accout: "1625778735",
+			createTime: "2022-11-08",
+		},
+	}
+
+	fmt.Printf("user.createTime: %v",user.createTime)	//结构体有字段命名冲突的匿名结构体，不可以省略匿名结构体名
+	fmt.Printf("user.Address.createTime: %v\n",user.Address.createTime)
+	fmt.Printf("user.Email.createTime: %v\n",user.Email.createTime)
+
+
+}
+```
+
+> **对于匿名的结构体字段，则可以省略结构体名，但当该结构体的字段与其他匿名结构体字段冲突时，不应该省略结构体名，不然会报错**
+
+
+
+##### 结构体继承
+
+```go
+type Animal struct {
+	name string
+}
+
+func (animal *Animal) move() {
+	fmt.Printf("%s 会动\n",animal.name)
+}
+
+type Dog struct {
+	feet int
+	//通过嵌套匿名结构体实现继承
+	*Animal
+}
+
+func (dog * Dog) wang() {
+	fmt.Printf("%s会汪汪汪~\n", dog.name)
+}
+
+func main() {
+	dog := &Dog {
+		feet: 8,
+		Animal: &Animal {
+			name: "狗",
+		},
+	}
+
+	dog.wang()
+	dog.move()
+}
+```
+
+> **可以通过嵌套匿名结构体来实现继承**
+
+
+
+##### 结构体json序列化与反序列化
+
+```go
+import (
+    //json的包名
+	"encoding/json"	
+	"fmt"
+)
+
+type Student struct {
+	Id int
+	Name string
+	Gender string
+}
+
+type Class struct {
+	Name string
+	Students []*Student
+}
+
+func main() {
+	class := &Class {
+		Name: "3年一班",
+		Students: make([]*Student, 0, 200),
+	}
+
+	for i:= 0; i < 10; i++ {
+		stu := &Student {
+			Id: i,
+			Name: fmt.Sprintf("%02d",i),
+			Gender: "男",
+		}
+		class.Students = append(class.Students,stu)
+	}
+
+	//JSON序列化
+	data, err := json.Marshal(class)
+	if err != nil {
+		fmt.Println("序列化失败!")
+		return
+	}
+	s := fmt.Sprintf("%s",data)
+	fmt.Println(string(data))
+
+	//反序列化
+	class1 := &Class{}
+	err = json.Unmarshal([]byte(s), class1)
+	if err != nil {
+		fmt.Println("反序列化失败!")
+		return
+	}
+	fmt.Printf("%#v",class1)
+}
+```
+
+> **使用json.Marshal和json.Unmarshal分别进行序列化和反序列化**
+
+
+
+##### 通过结构体Tag自定义json字段名
+
+```go
+type Student struct {
+	//指定id作为json键值即key
+	ID int 	`json:"id"`
+	//key默认与字段名一致
+	Name string
+	//私有字段无法被json读取，因为私有属性在相同包内被访问
+	gender string
+}
+
+func main() {
+	stu := &Student{
+		ID:     3,
+		Name:   "郑晓颖",
+		gender: "男",
+	}
+	data, err := json.Marshal(stu)
+	if err != nil {
+		fmt.Printf("序列化错误,错误原因为: %v\n",err)
+		return
+	}
+	fmt.Printf("%s\n",data)
+}
+```
+
+> **通过在字段后边加反引号``来指定json key值**
+>
+> **key值默认与字段名一致**
+>
+> **私有字段无法被json读取，因为私有属性在相同包内被访问**
+
+
+
+##### 使用接口接收结构体
+
+- 方法接收者为值类型
+
+```go
+type Animal interface {
+	eat()
+}
+
+type Dog struct {}
+
+func (d Dog) eat() {
+	fmt.Println("接收者类型为值类型")
+}
+
+func main() {
+	var d Dog
+	var animal1 Animal = d
+    var animal2 Animal = &d
+	animal1.eat()
+    animal2.eat()
+}
+```
+
+> **当结构体实现的方法接收者为值类型时，接口既能接受指针类型也能接受值类型**
+
+- 方法接收者为指针类型
+
+```go
+type Animal interface {
+	eat()
+}
+
+type Dog struct {}
+
+func (d *Dog) eat() {
+	fmt.Println("接收者类型为指针类型")
+}
+
+func main() {
+	var d Dog
+	var animal1 Animal = d	//会报错
+	var animal2 Animal = &d
+	animal1.eat()
+	animal2.eat()
+}
+```
+
+> **当结构体实现的方法接收者为指针类型时，接口只能接受指针类型**
+
+| 方法接收者类型\结构体变量类型 | 值类型 | 指针类型 |
+| ----------------------------- | ------ | -------- |
+| 指针类型                      | NO     | YES      |
+| 值类型                        | YES    | YES      |
+
+> **表格中的YES与NO表示接口能否接收该类型的变量**
+
+
+
+### 方法
+
+Go语言中的`方法（Method）`是一种作用于特定类型变量的函数，类似于java中的成员函数
+
+语法：
+
+```go
+func (接收者变量 接收者类型) 方法名(参数列表) (返回参数) {
+    函数体
+}
+```
+
+**接受者类型指定此方法属于哪种类型，只有该类型能调用此方法**，方法与Go里函数的区别是，函数不属于任何类型，方法属于特定的类型。
+
+- 接收类型为值类型的方法
+
+  ```go
+  func (p Person) GetAge() int {
+     return p.age
+  }
+  ```
+
+- 接收类型为指针类型的方法
+
+  ```go
+  func (p *Person) SetAge(age int) {
+     p.age = age
+  }
+  ```
+
+> struct结构体类型是值类型，**值类型想要在方法中修改其属性必须要用指针类型的方法**，否则修改的只是结构体变量的副本而已
+
+### 什么时候应该使用指针类型接收者
+
+1. 需要修改接收者中的值
+2. 接收者是拷贝代价比较大的大对象
+3. 保证一致性，如果有某个方法使用了指针接收者，那么其他的方法也应该使用指针接收者。
+
+
+
+对于非本地类型不能定义方法，也就是说我们不能给别的包的类型定义方法，可以使用 type myInt int将int声明为本地类型从而使用方法
+
+```go
+type MyInt int
+
+func (m MyInt) Hello() {
+   fmt.Println("Hello")
+}
+```
+
+
+
+示例：
+
+```go
+//结构体Person
+//struct是值类型
+type Person struct {
+	name  string
+	age   int
+	sex   string
+	hobby []string
+}
+
+//Person构造函数，返回的不是指针
+func NewPerson(name, sex string, age int, hobby []string) Person {
+	return Person{
+		name:  name,
+		age:   age,
+		sex:   sex,
+		hobby: hobby,
+	}
+}
+
+//接收者为值类型
+func (p Person) GetAge() int {
+	return p.age
+}
+
+//接收者为指针类型
+//结构体为值类型，想要在方法中修改其属性并且保存就需要用到指针类型
+func (p *Person) SetAge(age int) {
+	p.age = age
+}
+
+func main() {
+	p1 := NewPerson("郑晓颖", "男", 18, []string{"打篮球"})
+	fmt.Println(p1.GetAge()) //如果p1是值类型，则正常调用，如果p1是指针类型，则相当于(*p1).GetAge()
+	p1.SetAge(20)            //如果p1是值类型，则相当于(&p1).SetAge(),如果p1是指针类型，则正常调用
+	fmt.Println(p1)          //这即是go语言的语法糖
+}
+```
+
+| 实例类型\方法接收者类型 | 值类型 | 指针类型 |
+| ----------------------- | ------ | -------- |
+| 值类型                  | OK     | OK       |
+| 指针类型                | OK     | OK       |
+
+
+
+## 接口
+
+
+
+
+
+### 接口命名
+
+**如果接口类型只包含一个方法，那么这个接口的名字应该以er结尾，如果接口定义了多个方法，则其名字需要与其行为关联**
+
+
+
+
+
+## init函数
+
+程序里的所有init方法都会在main函数启动前被调用
+
+
+
+
+

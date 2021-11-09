@@ -2,11 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3171a18b-166c-4b35-98ee-ed0b5b9cf5c1" name="Default Changelist" comment="更新go笔记">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AAA.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Go开发笔记.md" beforeDir="false" afterPath="$PROJECT_DIR$/Go开发笔记.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ying/method/method.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/method/method.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ying/type/type.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ying/array/array.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ying/slice/slice.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/slice/slice.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ying/test/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/test/test.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -52,7 +54,7 @@
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -71,20 +73,13 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build go-test/ying/method">
-    <configuration name="go build FileReading.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Build.go build go-test/ying/slice">
+    <configuration name="go build go-test/ying/array" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go-test" />
-      <working_directory value="$PROJECT_DIR$/" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/ying/os/FileReading.go" />
-      <directory value="$PROJECT_DIR$/" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build IOUtilTest.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="go-test" />
-      <working_directory value="$PROJECT_DIR$/" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/ying/ioutil/IOUtilTest.go" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/ying/array/array.go" />
+      <package value="go-test/ying/array" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
@@ -97,30 +92,40 @@
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="go build if.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build go-test/ying/slice" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go-test" />
-      <working_directory value="$PROJECT_DIR$/" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/ying/if/if.go" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/ying/slice/slice.go" />
+      <package value="go-test/ying/slice" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="go build type.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build go-test/ying/test" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="go-test" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/ying/test/test.go" />
+      <package value="go-test/ying/test" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build test.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go-test" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/ying/type/type.go" />
+      <filePath value="$PROJECT_DIR$/ying/test/test.go" />
       <package value="go-test" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build go-test/ying/slice" />
+        <item itemvalue="Go Build.go build go-test/ying/array" />
+        <item itemvalue="Go Build.go build test.go" />
+        <item itemvalue="Go Build.go build go-test/ying/test" />
         <item itemvalue="Go Build.go build go-test/ying/method" />
-        <item itemvalue="Go Build.go build type.go" />
-        <item itemvalue="Go Build.go build FileReading.go" />
-        <item itemvalue="Go Build.go build IOUtilTest.go" />
-        <item itemvalue="Go Build.go build if.go" />
       </list>
     </recent_temporary>
   </component>
@@ -143,7 +148,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="1" />
     <MESSAGE value="更新go笔记" />
-    <option name="LAST_COMMIT_MESSAGE" value="更新go笔记" />
+    <MESSAGE value="添加结构体相关笔记" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加结构体相关笔记" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
