@@ -8,6 +8,10 @@ import (
 )
 
 func main() {
+
+	var m1 map[int]string
+	fmt.Println(m1)
+	fmt.Println(m1 == nil)
 	//定义map,int为key类型，string为值类型
 	var s1 map[int]string
 
