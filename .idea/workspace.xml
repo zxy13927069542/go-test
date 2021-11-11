@@ -6,8 +6,8 @@
       <change beforePath="$PROJECT_DIR$/AAA.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Go开发笔记.md" beforeDir="false" afterPath="$PROJECT_DIR$/Go开发笔记.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ying/array/array.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ying/slice/slice.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/slice/slice.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ying/interface/interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/interface/interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ying/map/map.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/map/map.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ying/test/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/ying/test/test.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -73,7 +73,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build go-test/ying/slice">
+  <component name="RunManager" selected="Go Build.go build go-test/ying/interface">
     <configuration name="go build go-test/ying/array" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go-test" />
       <working_directory value="$PROJECT_DIR$" />
@@ -83,12 +83,21 @@
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="go build go-test/ying/method" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build go-test/ying/interface" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go-test" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <filePath value="$PROJECT_DIR$/ying/method/method.go" />
-      <package value="go-test/ying/method" />
+      <filePath value="$PROJECT_DIR$/ying/interface/interface.go" />
+      <package value="go-test/ying/interface" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build go-test/ying/map" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="go-test" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/ying/map/map.go" />
+      <package value="go-test/ying/map" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
@@ -110,22 +119,13 @@
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="go build test.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="go-test" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/ying/test/test.go" />
-      <package value="go-test" />
-      <directory value="$PROJECT_DIR$/" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build go-test/ying/interface" />
+        <item itemvalue="Go Build.go build go-test/ying/test" />
+        <item itemvalue="Go Build.go build go-test/ying/map" />
         <item itemvalue="Go Build.go build go-test/ying/slice" />
         <item itemvalue="Go Build.go build go-test/ying/array" />
-        <item itemvalue="Go Build.go build test.go" />
-        <item itemvalue="Go Build.go build go-test/ying/test" />
-        <item itemvalue="Go Build.go build go-test/ying/method" />
       </list>
     </recent_temporary>
   </component>
@@ -149,7 +149,9 @@
     <MESSAGE value="1" />
     <MESSAGE value="更新go笔记" />
     <MESSAGE value="添加结构体相关笔记" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加结构体相关笔记" />
+    <MESSAGE value="新增数组，结构体，包，常用命令" />
+    <MESSAGE value="添加一点map" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加一点map" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

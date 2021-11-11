@@ -626,10 +626,97 @@ m := map[int]string {
     3 : "郑速贤",
     4 : "郑周珊",
 }
-//判断key为1键值对是否存在，并用val接收值，用exit接收存在结果，存在则为true，不存在则为false
+//判断key为1的键值对是否存在，并用val接收值，用exit接收存在结果，存在则为true，不存在则为false
 val, exit := m[1]
 if exit {
     fmt.Println(val)	//郑晓颖
+}
+```
+
+
+
+### map的遍历
+
+由于map是基于`hash`实现的，其内部存储元素是无序的，因此无法用普通`for`循环遍历，只能用`for range`遍历
+
+```go
+s1 := map[int]string {
+    1 : "郑晓颖",
+    2 : "郑兵颖",
+}
+//1.map的遍历
+//2.map中元素无序，无法用普通for循环遍历，需要使用for range遍历
+for key, value := range s1 {
+    fmt.Println(key, value)
+    //直接修改range返回的key和value是无效的，返回的key和value只是副本
+    value = "郑周珊"
+    //这种修改才有效
+    s1[key] = "郑速贤"
+}
+```
+
+- 与切片一致，`for range`返回的`key`和`value`是副本，直接修改反映不到map中
+
+
+
+### 使用delete删除键值对
+
+删除map中的键值对需要使用内置函数`delete()`来删除
+
+```go
+func delete(m map[Type]Type1, key Type)
+```
+
+```go
+s1 := map[int]string {
+    1 : "郑晓颖",
+    2 : "郑兵颖",
+}
+//内建函数delete按照指定的键将元素从映射中删除。若m为nil或无此元素，delete不进行操作。
+delete(s1, 1)
+fmt.Println(s1)	//map[2:郑兵颖]
+```
+
+
+
+### 按照指定顺序遍历map
+
+```go
+/**
+生成随机数的value，并按照key的顺序打印键值对
+ */
+func main() {
+   //1.测试printOrderly函数
+   //2.初始化随机数种子
+   rand.Seed(time.Now().UnixNano())
+   //3.初始化map
+   s2 := make(map[string]int, 20)
+   //4.往map中填充元素
+   var key string //将key与value放在for循环外避免重复定义
+   var value int
+   for i := 0; i < 20; i++ {
+      key = fmt.Sprintf("第%02d", i) // %02d : 不足两位的整数用0补足，超出或等于两位的整数正常输出
+      value = rand.Intn(20)         //生产0~19的整数
+      s2[key] = value
+   }
+   //5.调用printOrderly函数
+   printOrderly(s2)
+}
+
+//将map中的元素按序打印
+func printOrderly(s2 map[string]int) {
+   //1.初始化一个容量为s2长度的切片
+   s3 := make([]string, 0, len(s2))
+   //2.遍历s2，将key存入切片中
+   for k := range s2 {
+      s3 = append(s3, k)
+   }
+   //3.为切片中的key排序
+   sort.Strings(s3)
+   //4.输出
+   for _, v := range s3 {
+      fmt.Println(v, s2[v])
+   }
 }
 ```
 
@@ -1199,7 +1286,7 @@ func main() {
 
 
 
-### 方法
+## 方法
 
 Go语言中的`方法（Method）`是一种作用于特定类型变量的函数，类似于java中的成员函数
 
@@ -1287,7 +1374,7 @@ func (p *Person) SetAge(age int) {
 func main() {
 	p1 := NewPerson("郑晓颖", "男", 18, []string{"打篮球"})
 	fmt.Println(p1.GetAge()) //如果p1是值类型，则正常调用，如果p1是指针类型，则相当于(*p1).GetAge()
-	p1.SetAge(20)            //如果p1是值类型，则相当于(&p1).SetAge(),如果p1是指针类型，则正常调用
+	p1.SetAge(20)            //如果p1是值类型，则相当于(&p1).SetAge()，所以也能修改自身属性,如果p1是指针类型，则正常调用
 	fmt.Println(p1)          //这即是go语言的语法糖
 }
 ```
@@ -1297,19 +1384,238 @@ func main() {
 | 值类型                  | OK     | OK       |
 | 指针类型                | OK     | OK       |
 
+> **值类型的示例调用接收者为指针类型的方法也能修改自身属性**
+
 
 
 ## 接口
 
+- 在Go语言中接口`interface`是一种类型
+- 接口是一组方法`method`的集合，当一个对象实现了这组方法`method`,我们就称该对象实现了该接口，这就是鸭式编程`duck-type programming`的体现
+- `duck-type programming`: 当看到一只鸟走起来像鸭子、游泳起来像鸭子、叫起来也像鸭子，那么这只鸟就可以被称为鸭子
 
 
 
+### 接口定义
 
-### 接口命名
+```go
+type 接口类型名 interface{
+    方法名1( 参数列表1 ) 返回值列表1
+    方法名2( 参数列表2 ) 返回值列表2
+    …
+}
+```
 
-**如果接口类型只包含一个方法，那么这个接口的名字应该以er结尾，如果接口定义了多个方法，则其名字需要与其行为关联**
+- **如果接口类型只包含一个方法，那么这个接口的名字应该以er结尾，如果接口定义了多个方法，则其名字需要与其行为关联**
+
+例子：
+
+```go
+type Shape interface{
+	Draw()
+}
+```
 
 
+
+### 接口的实现
+
+当一个对象实现了这组方法`method`,我们就称该对象实现了该接口，这里使用`Circle`和`Triangle`实现了接口`Shape`,**既可以使用值类型方法实现接口，也可以使用指针类型方法实现接口**
+
+```go
+//形状
+type Shape interface {
+	Draw()
+}
+
+//圆形
+type Circle struct {}
+
+//实现了接口Shape
+func (c Circle) Draw() {
+	fmt.Println("这里是circle圆形")
+}
+
+//三角形
+type Triangle struct {}
+
+func (t *Triangle) Draw() {
+	fmt.Println("这里是triangle三角形")
+}
+```
+
+可以使用占位符来确保对象实现了接口,当该语句编译不报错时，便说明Circle实现了该接口
+
+```go
+var _ Shape = Circle{}
+```
+
+接口的方法不一定要由一个类型实现，也可由子类型实现，**子类型要匿名**
+
+```go
+// WashingMachine 洗衣机
+type WashingMachine interface {
+	wash()
+	dry()
+}
+
+// 甩干器
+type dryer struct{}
+
+// 实现WashingMachine接口的dry()方法
+func (d dryer) dry() {
+	fmt.Println("甩一甩")
+}
+
+// 海尔洗衣机
+type haier struct {
+	dryer //嵌入甩干器,注意这里要用匿名，不然无法实现接口WashingMachine
+}
+
+// 实现WashingMachine接口的wash()方法
+func (h haier) wash() {
+	fmt.Println("洗刷刷")
+}
+```
+
+
+
+### 使用接口接收对象
+
+当一个对象实现一个接口后，我们就可以用该接口来接收实现了该接口的对象，根据实现方式的不同，接收方式也不同
+
+- 只要有一个方法使用指针类型实现时,需要传递指针类型给接口接收
+
+  ```go
+  var shape Shape
+  //shape = Triangle{} 会报错，需要传递指针给接口接收
+  shape = &Triangle{}
+  shape.Draw()
+  ```
+
+- 当全部方法都是用值类型实现时，既可以传递值类型给接口，也可以传递指针类型给接口
+
+  ```go
+  var shape Shape
+  shape = Circle{}	//shape = &Circle{}	这里既可传递指针也可以传递值
+  shape.Draw()
+  ```
+
+
+
+### 接口嵌套
+
+接口与接口间可以通过嵌套创造出新的接口。
+
+```go
+// Sayer 接口
+type Sayer interface {
+	say()
+}
+
+// Mover 接口
+type Mover interface {
+	move()
+}
+
+// 接口嵌套
+type animal interface {
+	Sayer
+	Mover
+}
+```
+
+嵌套得到的接口的使用与普通接口一样，这里我们让cat实现animal接口：
+
+```go
+type cat struct {
+	name string
+}
+
+func (c cat) say() {
+	fmt.Println("喵喵喵")
+}
+
+func (c cat) move() {
+	fmt.Println("猫会动")
+}
+
+func main() {
+	var x animal
+	x = cat{name: "花花"}
+	x.move()
+	x.say()
+}
+```
+
+
+
+### 空接口
+
+空接口是没有定义任何方法的接口，因此任何类型都实现了空接口，所以空接口可以接收任何类型的变量
+
+```go
+//接口也能在函数内定义
+type Null interface{}
+var null Null
+null = "李小龙"
+fmt.Println(null)
+```
+
+
+
+### 类型断言
+
+空接口可以接收任何类型的变量，那么怎么从一个空接口确定它具体是什么类型什么值呢？这时候就要用到**类型断言**了
+
+想要判断空接口中的值这个时候就可以使用类型断言，其语法格式：
+
+```go
+x.(T)
+```
+
+其中：
+
+- x：表示类型为`interface{}`的变量
+- T：表示断言`x`可能是的类型。
+
+该语法返回两个参数，第一个参数是`x`转化为`T`类型后的变量，第二个值是一个布尔值，若为`true`则表示断言成功，为`false`则表示断言失败。
+
+举个例子：
+
+```go
+func main() {
+	var x interface{}
+	x = "Hello 沙河"
+	v, ok := x.(string)
+	if ok {
+		fmt.Println(v)
+	} else {
+		fmt.Println("类型断言失败")
+	}
+}
+```
+
+上面的示例中如果要断言多次就需要写多个`if`判断，这个时候我们可以使用`switch`语句来实现：
+
+```go
+func justifyType(x interface{}) {
+	switch v := x.(type) {
+	case string:
+		fmt.Printf("x is a string，value is %v\n", v)
+	case int:
+		fmt.Printf("x is a int is %v\n", v)
+	case bool:
+		fmt.Printf("x is a bool is %v\n", v)
+	default:
+		fmt.Println("unsupport type！")
+	}
+}
+```
+
+因为空接口可以存储任意类型值的特点，所以空接口在Go语言中的使用十分广泛。
+
+关于接口需要注意的是，只有当有两个或两个以上的具体类型必须以相同的方式进行处理时才需要定义接口。不要为了接口而写接口，那样只会增加不必要的抽象，导致不必要的运行时损耗。
 
 
 

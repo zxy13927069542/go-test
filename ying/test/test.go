@@ -1,12 +1,27 @@
 package main
 
-import (
-	"fmt"
-	calc "go-test/ying/package"
-)
+import "fmt"
 
-//main函数
+type Person struct {
+	id   int
+	name string
+}
+
+func (p Person) Print() {
+	fmt.Println(p)
+}
+
+func (p *Person) setId(id int) {
+	p.id = id
+}
+
 func main() {
-	calc.Reduce(3, 4)
-	fmt.Println("AAA")
+	p := Person{
+		id:   1,
+		name: "郑晓颖",
+	}
+
+	p.Print()
+	p.setId(0)
+
 }
