@@ -112,91 +112,6 @@ import _ "go-test/ying/package"
 
         重启就可以了
 
-## map使用及知识点
-
-```go
-	//定义map,int为key类型，string为值类型
-	var s1 map[int]string
-
-	//map为引用类型，如果不进行初始化则为空，即nil，如果不进行初始化就往map中添加元素，则会报错
-	fmt.Println(s1 == nil) //true
-
-	//所以map定义之后还需要分配内存空间来进行初始化，类似于java中的new操作，所以使用make来分配内存空间进行初始化
-	s1 = make(map[int]string, 10) //第一个参数为map类型，第二个参数为map容量，超出容量会动态扩容
-
-	//初始化之后即可为往map中存储元素
-	s1[3] = "李华"
-	fmt.Println(s1)
-
-	//根据key获取value
-	v1 := s1[3]
-	fmt.Println(v1)
-
-	//判断key是否存在并返回value
-	v2, ok := s1[4]
-	if ok {
-		fmt.Println(v2)
-	} else {
-		fmt.Println("key不存在")
-		//string不是引用类型，空值不是nil，而是""这样一个空字符串
-		fmt.Printf("value类型为:%T,是否为空:%v,值为:%v\n", v2, v2 == "", v2)
-	}
-
-	//map的遍历
-	//map中元素无序，无法用普通for循环遍历，需要使用for range遍历
-	for k3, v3 := range s1 {
-		fmt.Println(k3, v3)
-	}
-	//只遍历key
-	for k4 := range s1 {
-		fmt.Println(k4)
-	}
-	//只遍历value
-	for _, v5 := range s1 {
-		fmt.Println(v5)
-	}
-
-	//删除键值对
-	//func delete(m map[Type]Type1, key Type)
-	//内置函数delete按照指定的键将元素从映射中删除。若m为nil或无此元素，delete不进行操作。
-	delete(s1, 3)
-	fmt.Println(s1)
-
-	//测试printOrderly函数
-	//初始化随机数种子
-	rand.Seed(time.Now().UnixNano())
-	//初始化map
-	s2 := make(map[string]int, 20)
-	//往map中填充元素
-	var key string //将key与value放在for循环外避免重复定义
-	var value int
-	for i := 0; i < 20; i++ {
-		key = fmt.Sprintf("第%02d", i) // %02d : 不足两位的整数用0补足，超出或等于两位的整数正常输出
-		value = rand.Intn(20)         //生产0~19的整数
-		s2[key] = value
-	}
-	//调用printOrderly函数
-	printOrderly(s2)
-}
-
-//将map中的元素按序打印
-func printOrderly(s2 map[string]int) {
-	//初始化一个容量为s2长度的切片
-	s3 := make([]string, 0, len(s2))
-	//遍历s2，将key存入切片中
-	for k := range s2 {
-		s3 = append(s3, k)
-	}
-	//为切片中的key排序
-	sort.Strings(s3)
-	//输出
-	for _, v := range s3 {
-		fmt.Println(v, s2[v])
-	}
-
-}
-```
-
 
 
 
@@ -1625,5 +1540,301 @@ func justifyType(x interface{}) {
 
 
 
+## goroutine
 
+Go语言的并发通过`goroutine`实现。`goroutine`类似于线程，属于用户态的线程，我们可以根据需要创建成千上万个`goroutine`并发工作。`goroutine`是由Go语言的运行时（runtime）调度完成，而线程是由操作系统调度完成。
+
+
+
+### goroutine的使用
+
+```go
+func Hello() {
+   fmt.Println("Hello World")
+}
+//直接在函数前加go即可开启goroutine
+go Hello()
+```
+
+
+
+### GOMAXPROCS
+
+Go运行时的调度器使用`GOMAXPROCS`参数来确定需要使用多少个OS线程来同时执行Go代码。默认值是机器上的CPU核心数。例如在一个8核心的机器上，调度器会把Go代码同时调度到8个OS线程上（GOMAXPROCS是m:n调度中的n）。
+
+Go语言中可以通过`runtime.GOMAXPROCS()`函数设置当前程序并发时占用的CPU逻辑核心数。
+
+Go1.5版本之前，默认使用的是单核心执行。Go1.5版本之后，默认使用全部的CPU逻辑核心数。
+
+```go
+func GOMAXPROCS(n int) int	//设置当前程序并发时占用的CPU逻辑核心数
+```
+
+```go
+func NumCPU() int	//获取当前程序所能使用的最大CPU核心数，在程序开始执行时便已确定
+```
+
+```go
+runtime.GOMAXPROCS(runtime.NumCPU())
+```
+
+
+
+### sync.WaitGroup
+
+在代码中生硬的使用`time.Sleep`肯定是不合适的，Go语言中可以使用`sync.WaitGroup`来实现并发任务的同步。 `sync.WaitGroup`有以下几个方法：
+
+|             方法名              |        功能         |
+| :-----------------------------: | :-----------------: |
+| (wg * WaitGroup) Add(delta int) |    计数器+delta     |
+|     (wg *WaitGroup) Done()      |      计数器-1       |
+|     (wg *WaitGroup) Wait()      | 阻塞直到计数器变为0 |
+
+`sync.WaitGroup`内部维护着一个计数器，计数器的值可以增加和减少。例如当我们启动了N 个并发任务时，就将计数器值增加N。每个任务完成时通过调用Done()方法将计数器减1。通过调用Wait()来等待并发任务执行完，当计数器值为0时，表示所有并发任务已经完成。
+
+我们利用`sync.WaitGroup`将上面的代码优化一下：
+
+```go
+var wg sync.WaitGroup
+
+func hello() {
+	defer wg.Done()
+	fmt.Println("Hello Goroutine!")
+}
+func main() {
+	wg.Add(1)
+	go hello() // 启动另外一个goroutine去执行hello函数
+	fmt.Println("main goroutine done!")
+	wg.Wait()
+}
+```
+
+需要注意`sync.WaitGroup`是一个结构体，传递的时候要传递指针。
+
+
+
+## channel
+
+- 虽然可以使用共享内存在多个`goroutine`进行数据交换，但是共享内存在不同的`goroutine`中容易发生竞态问题。为了保证数据交换的正确性，必须使用互斥量对内存进行加锁，这种做法势必造成性能问题。
+- Go语言提倡**通过通信共享内存**而不是**通过共享内存而实现通信**。`goroutine`是Go程序并发的执行体，`channel`就是它们之间的连接。`channel`是可以让一个`goroutine`发送特定值到另一个`goroutine`的通信机制。
+- **`channel`是一种类型，一种`引用类型`**
+
+
+
+### channel的定义
+
+channel是引用类型，它的空值为`nil`，所以需要初始化后才能使用
+
+```go
+var 变量 chan 元素类型
+```
+
+```go
+var ch1 chan string	//能传递string类型的通道
+var ch2 chan int	//能传递int类型的通道
+fmt.Println(ch1 == nil)    //true
+fmt.Println(ch2 == nil)    //true
+```
+
+
+
+### channel的初始化
+
+channel的初始化需要使用`make()`来实现
+
+```
+make(chan 元素类型, [缓冲大小])	
+```
+
+```go
+ch1 = make(chan string)	//初始化一个无缓冲的通道
+ch2 = make(chan int, 2)	//初始化一个缓冲为2的通道
+```
+
+- 通道初始化,第一个为通道类型，第二个为通道缓冲大小，**不填缓冲则无缓冲,如果无缓冲，当前线程会阻塞直到通道中数据被接收**
+
+
+
+### channel的使用
+
+通道有发送、接收、关闭三种操作，其中发送和接收都使用`<-`符号
+
+- 发送操作
+
+  ```go
+  ch1 <- "郑晓颖"	//把一个字符串发送到ch1中
+  ```
+
+- 接收操作
+
+  ```go
+  x := <- ch1	//使用x接收ch1中的第一个数据
+  <- ch1	//匿名接收ch1中的第一个数据
+  ```
+
+- 关闭操作
+
+  ```go
+  close(ch1)	
+  ```
+
+  关于关闭通道需要注意的事情是，只有在通知接收方goroutine**所有的数据都发送完毕**的时候才需要关闭通道。通道是可以被垃圾回收机制回收的，它和关闭文件是不一样的，在结束操作之后关闭文件是必须要做的，但关闭通道不是必须的。
+
+  关闭后的通道有以下特点：
+
+  - 对一个关闭的通道再发送值就会导致panic。
+
+  - 对一个关闭的通道进行接收会一直获取值直到通道为空,也就是说关闭通道后仍然可以从通道中获取里面存在的数据。
+
+  - 对一个关闭的并且没有值的通道执行接收操作会得到对应类型的零值。
+
+  - 关闭一个已经关闭的通道会导致panic。
+
+示例：
+
+```go
+var wg sync.WaitGroup
+
+//往通道发送数据
+func send(ch chan string) {
+    defer wg.Done()
+	//使用cap函数能获取通道的容量
+	//使用len函数能获取通道中的数据数量
+	for i := 0; i < cap(ch) - len(ch); i++ {
+		ch <- fmt.Sprintf("第%d条数据", i)
+	}
+	close(ch)
+}
+
+//接收通道中的数据
+func receive(ch chan string) {
+    defer wg.Done()
+	//使用for range遍历得到通道中的数据，当读完后会自动退出
+	for val := range ch {
+		fmt.Println(val)
+	}
+}
+
+func main() {
+	ch := make(chan string, 2)
+	//开启两个线程实现数据发送与接收
+	wg.Add(2)
+	go send(ch)
+	go receive(ch)
+	//等待线程执行完成
+	wg.Wait()
+}
+```
+
+
+
+### 单向通道
+
+单向通道通常在函数参数声明时使用，例子如下
+
+```go
+func test(ch chan <- int)	//只接收chan int类型的通道，在test函数中只能进行发送操作，否则会报错
+func test(ch <- chan int)	//只接收chan int类型的通道，在test函数中只能进行接收操作，否则会报错
+```
+
+
+
+### 通道总结
+
+`channel`常见的异常总结，如下图：![channel异常总结](https://www.liwenzhou.com/images/Go/concurrence/channel01.png)
+
+
+
+案例：
+
+```go
+/**
+	使用并发模拟击球比赛
+ */
+
+var wg sync.WaitGroup
+
+//会在main函数被调用前执行
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+func player(name string, ch chan int) {
+	defer wg.Done()
+
+	for {
+		ball, ok := <- ch	//通道关闭则返回false
+		//通道被关闭的话就表示我们赢了
+		if !ok {
+			fmt.Printf("%s 赢了\n", name)
+			break
+		}
+
+		//随机判断接球是否成功
+		i := rand.Intn(100)
+		//偶数则接球成功
+		if i != 99 {
+			fmt.Printf("%s Hit %d\n", name, ball)
+			ball++
+			ch <- ball
+		} else {	//接球失败
+			fmt.Printf("%s 接球失败\n", name)
+			//主动关闭通道表示输了
+			close(ch)
+			break
+		}
+	}
+}
+
+func main() {
+	ch := make(chan int)
+	wg.Add(2)
+	go player("郑晓颖", ch)
+	go player("郑兵颖", ch)
+	ch <- 1
+
+
+	wg.Wait()
+}
+```
+
+```go
+/**
+使用并发模拟接力比赛
+*/
+
+var wg sync.WaitGroup
+
+func main() {
+	wg.Add(1)
+	ch := make(chan int)
+	go Runner(ch)
+
+	//比赛开始
+	ch <- 1
+	wg.Wait()
+}
+
+func Runner(ch chan int) {
+	defer wg.Done()
+	runner := <- ch
+	fmt.Printf("运动员%d号接棒\n", runner)
+	fmt.Printf("运动员%d号跑起来了\n", runner)
+	if runner < 4 {
+		newRunner := runner + 1
+		fmt.Printf("运动员%d号已就位\n", newRunner)
+		wg.Add(1)
+		go Runner(ch)
+
+		fmt.Printf("运动员%d号开始传棒\n", runner)
+		ch <- newRunner
+	} else {
+		fmt.Printf("运动员%d号冲过终点\n", runner)
+		fmt.Println("比赛结束！")
+		close(ch)
+	}
+
+
+}
+```
 
