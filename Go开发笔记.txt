@@ -1838,3 +1838,91 @@ func Runner(ch chan int) {
 }
 ```
 
+
+
+
+
+## os/signal
+
+
+
+### type Signal
+
+```
+type Signal interface {
+    String() string
+    Signal() // 用来区分其他实现了Stringer接口的类型
+}
+```
+
+**Signal代表一个操作系统信号**。一般其底层实现是依赖于操作系统的：在Unix中，它是syscall.Signal类型。
+
+```
+var (
+    Interrupt Signal = syscall.SIGINT
+    Kill      Signal = syscall.SIGKILL
+)
+```
+
+仅有的肯定会被所有操作系统提供的信号，**Interrupt（中断信号）和Kill（强制退出信号）**。
+
+
+
+### func Notify
+
+```go
+func Notify(c chan<- os.Signal, sig ...os.Signal)
+```
+
+```go
+signal.Notify(r.interrupt, os.Interrupt)	//将中断信号转到目标通道
+```
+
+Notify函数让signal包将输入信号转发到c。如果没有列出要传递的信号，会将所有输入信号传递到c；否则只传递列出的输入信号。
+
+signal包不会为了向c发送信息而阻塞（就是说如果发送时c阻塞了，signal包会直接放弃）：调用者应该保证c有足够的缓存空间可以跟上期望的信号频率。对使用单一信号用于通知的通道，缓存为1就足够了。
+
+
+
+### func Stop
+
+```
+func Stop(c chan<- os.Signal)
+```
+
+Stop函数让signal包停止向c转发信号。它会**取消之前使用c调用的所有Notify的效果**。当Stop返回后，会保证c不再接收到任何信号。
+
+
+
+
+
+## time
+
+### time.Time
+
+go语言中使用结构体类型time.Time来描述时间，具体使用如下：
+
+```go
+now := time.Now()   //获取当前时间
+year := now.Year() //年份
+month := now.Month()   //月份
+day := now.Day()   //日期
+weekday := now.Weekday()   //周几
+hour := now.Hour() //小时
+minute := now.Minute() //分钟
+second := now.Second() //秒
+```
+
+
+
+### Unix时间戳
+
+什么是Unix时间戳(Unix timestamp)： Unix时间戳(Unix timestamp)，或称Unix时间(Unix time)、POSIX时间(POSIX time)， 是一种时间表示方式，定义为从格林威治时间1970年01月01日00时00分00秒起至现在的**总秒数**。 Unix时间戳不仅被使用在Unix系统、类Unix系统中，也在许多其他操作系统中被广泛采用。
+
+```go
+now := time.Now()
+unix := now.Unix()	//获取以秒为单位的时间戳
+nano := now.UnixNano()	//获取以纳秒为单位的时间戳，如果超过int64的长度，结果不可知
+fmt.Println(unix，nano)
+```
+
