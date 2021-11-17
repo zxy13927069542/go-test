@@ -14,17 +14,18 @@ import (
 func main() {
 
 	Read()
-	Write()
+	//Write()
 
 }
 
 func Read() {
 	//打开文件
-	file, err := os.Open("./AAA.txt")
+	file, err := os.Open("ErrorMsg.txt")
 	if err != nil {
 		fmt.Println("打开文件失败！错误原因为：", err)
 		return
 	}
+	defer file.Close()
 	//使用Bufio读取文件
 	fileReader := bufio.NewReader(file)
 	for {
@@ -33,22 +34,20 @@ func Read() {
 		//如果遇到err == io.EOF则返回错误并返回在遇到错误前的数据
 		//当读到最后一行会报err == io.EOF，需要在此打印line
 		if err == io.EOF {
-			if len(line) == 0 {
-				fmt.Println("ERROR！文件已经读完，无须再读！", err)
-				break
-			} else {
+			if len(line) != 0 {
 				fmt.Println(line)
-				break
 			}
+			fmt.Println("文件已经读完！")
+			break
 		}
 		//当且仅当找不到截止符号时会err != nil
 		if err != nil {
 			fmt.Println("ERROR! 找不到截止符号！", err)
 			return
 		}
-		fmt.Println(line)
+		//注意这里不要用Println,否则会多打换行符
+		fmt.Print(line)
 	}
-	file.Close()
 }
 
 func Write() {

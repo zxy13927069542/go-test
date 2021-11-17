@@ -15,16 +15,16 @@ import (
 func main() {
 
 	//调用写文件操作
-	Write()
+	//Write()
 	//调用文件读操作
-	//Read()
+	Read()
 	//调用文件复制函数
-	//CopyFile("./AAA.txt", "./BBB.txt")
+	//CopyFile("ying/error/ErrorMsg.go", "ErrorMsg.txt")
 
 }
 
 func Read() {
-	file, err := os.Open("./AAA.txt")
+	file, err := os.Open("ErrorMsg.txt")
 	if err != nil {
 		error.ErrorMsg("打开文件失败！", err)
 	}
