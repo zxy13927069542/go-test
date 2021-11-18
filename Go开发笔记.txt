@@ -2558,3 +2558,253 @@ func main() {
    Error.Println("这里是Error日志")
 }
 ```
+
+
+
+
+
+## encoding/json
+
+### 解码
+
+#### NewDecoder
+
+```
+func NewDecoder(r io.Reader) *Decoder
+```
+
+NewDecoder创建一个从r读取并解码json对象的*Decoder，解码器有自己的缓冲，并可能超前读取部分json数据。创建`*Decoder`后，可以调用方法`Decode()`将json数据解码到相应的结构体中。
+
+#### Decoder
+
+```
+func (dec *Decoder) Decode(v interface{}) error
+```
+
+Decode从输入流读取下一个json编码值并保存在v指向的值里
+
+
+
+#### Unmarshal
+
+```
+func Unmarshal(data []byte, v interface{}) error
+```
+
+Unmarshal函数用于解码字节切片`[]byte`类型的数据
+
+
+
+案例：调用百度地图api，解码返回的json，并存储到对应的结构体
+
+```go
+/**
+   顶层结点
+ */
+type Response struct {
+   Status	int			`json: "status"`
+   Message	string		`json: "message"`
+   Result	[]Result	`json:"result"`
+}
+
+type Result struct {
+   Name		string		`json:"name"`
+   Location	Location	`json:"location"`
+   Uid		string		`json:"uid"`
+   Province	string		`json:"province"`
+   City		string		`json:"city"`
+   District	string		`json:"district"`
+   Business	string		`json:"business"`
+   Cityid	string		`json:"cityid"`
+   Tag		string		`json:"tag"`
+   Address	string		`json:"address"`
+   Children	[]Child		`json:"children"`
+   Adcode	string		`json:"adcode"`
+}
+
+type Location struct {
+   Lat       float64       `json:"lat"`
+   Lng       float64       `json:"lng"`
+}
+
+type Child struct {
+   Uid			string    `json:"uid"`
+   Name			string    `json:"name"`
+   Show_name  	string    `json:"show_name"`
+}
+
+func main() {
+	url := "https://api.map.baidu.com/place/v2/suggestion?query=天安门&region=北京&city_limit=true&output=json&ak=pqnjDWUVvNlGj7vVdxhzD6zLoi0Df1bG"
+
+	//发送get请求
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer resp.Body.Close()
+
+	//使用Decode解码
+	var result Response	//可以不初始化，Decode会帮我们初始化
+	err = json.NewDecoder(resp.Body).Decode(result)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+    
+    //使用Unmarshal解码
+	body, err := ioutil.ReadAll(resp.Body)
+	err = json.Unmarshal(body, result)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("%#v\n", result)
+}
+```
+
+> 注意结构体字段要大写，不然`encoding/json`无法访问相应的字段，这是个大坑
+
+
+
+案例：
+
+```go
+/**
+	map与json的相互转换
+ */
+func main() {
+	var jsonString = `{
+		"name": "Gopher",
+		"title": "programmer",
+		"contact": {
+			"home": "415.333.3333",
+			"cell": "415.555.5555"
+		}
+	}`
+
+	var target map[string]interface{}
+	//将json转成map
+	err := json.Unmarshal([]byte(jsonString), &target)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("name:", target["name"])
+	fmt.Println("title:", target["title"])
+	fmt.Println("contact:")
+	fmt.Println("home:", target["contact"].(map[string]interface{})["home"])
+	fmt.Println("cell:", target["contact"].(map[string]interface{})["cell"])
+
+	//将map转成json
+	jsonByte, err := json.Marshal(target)
+	fmt.Println(string(jsonByte))
+}
+```
+
+
+
+### 编码
+
+#### marshal
+
+```go
+func Marshal(v interface{}) ([]byte, error)
+```
+
+Marshal函数返回v的json编码。
+
+
+
+案例：
+
+```go
+import (
+    //json的包名
+	"encoding/json"	
+	"fmt"
+)
+
+type Student struct {
+	Id int
+	Name string
+	Gender string
+}
+
+type Class struct {
+	Name string
+	Students []*Student
+}
+
+func main() {
+	class := &Class {
+		Name: "3年一班",
+		Students: make([]*Student, 0, 200),
+	}
+
+	for i:= 0; i < 10; i++ {
+		stu := &Student {
+			Id: i,
+			Name: fmt.Sprintf("%02d",i),
+			Gender: "男",
+		}
+		class.Students = append(class.Students,stu)
+	}
+
+	//JSON序列化
+	data, err := json.Marshal(class)
+	if err != nil {
+		fmt.Println("序列化失败!")
+		return
+	}
+	s := fmt.Sprintf("%s",data)
+	fmt.Println(string(data))
+
+	//反序列化
+	class1 := &Class{}
+	err = json.Unmarshal([]byte(s), class1)
+	if err != nil {
+		fmt.Println("反序列化失败!")
+		return
+	}
+	fmt.Printf("%#v",class1)
+}
+```
+
+> **使用json.Marshal和json.Unmarshal分别进行序列化和反序列化**
+
+
+
+
+
+## 单元测试
+
+### 基础单元测试
+
+```go
+const pass = "\u2713"   //打勾
+const fail = "\u2717"  //打X
+
+func TestDownload(t *testing.T) {
+   url := "https://api.map.baidu.com/place/v2/suggestion?query=天安门&region=北京&city_limit=true&output=json&ak=pqnjDWUVvNlGj7vVdxhzD6zLoi0Df1bG"
+   statusCode := 200
+
+   t.Log("测试下载功能")
+   {
+      resp, err := http.Get(url)
+      if err != nil {
+         t.Fatal("测试结果:", fail, err)
+         return
+      }
+      defer resp.Body.Close()
+
+      if resp.StatusCode == statusCode {
+         t.Log("测试结果:", pass, statusCode)
+      } else {
+         t.Log("测试结果:", fail, statusCode)
+      }
+   }
+}
+```
+
