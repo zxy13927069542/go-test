@@ -1,6 +1,6 @@
 package invoker
 
-import "githup.com/ying/package"
+import calc "go-test/ying/package"
 
 //调用其他包步骤：
 //1.修改goland设置：file->settings->go->go module
@@ -8,5 +8,5 @@ import "githup.com/ying/package"
 //2.在项目目录下执行
 //go mod init
 func invokeAdd() {
-	calc.Add(15, 16)
+	calc.Add(3, 4)
 }

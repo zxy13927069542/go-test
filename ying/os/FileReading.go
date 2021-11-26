@@ -34,7 +34,8 @@ func Read() {
 	var contend []byte
 	for {
 		n, err := file.Read(buff)
-		if err == io.EOF {
+		if err == io.
+			EOF {
 			fmt.Println("文件已经读完了，无须再读！")
 			break
 		}
@@ -55,7 +56,7 @@ func Read() {
 	//	return
 }
 
-//在AAA.txt文件写10行内容，写方式为覆盖写，写之前会清空文件内容
+// Write 在AAA.txt文件写10行内容，写方式为覆盖写，写之前会清空文件内容
 func Write() {
 	//使用权限打开文件，使文件拥有读写相关的权限
 	//os.O_TRUNC 清空
