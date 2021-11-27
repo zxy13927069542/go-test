@@ -65,6 +65,7 @@ git init
 git add [file1] [file2] ...		//添加一个或多个文件到暂存区
 git add [dir]					//添加指定目录到暂存区,包括子目录
 git add .						//添加当前目录下所有文件到暂存区
+git add all						//提交全部修改
 ```
 
 
