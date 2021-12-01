@@ -148,6 +148,62 @@ git reset HEAD <file>	//可以把暂存区的修改撤销掉（unstage）
 
 
 
+## 生成SSH key
+
+```
+ssh-keygen -t rsa -C "zhengxiaoying666@gmail.com"
+```
+
+此命令会在用户主目录下的`.ssh`目录下生成`id_rsa`和`id_rsa_pub`两个文件，如果已有这两个文件则不用执行此命令
+
+- 在github创建ssh，将公钥`id_rsa_pub`的内容复制到github的`SSH Keys`上
+
+- 创建github仓库
+
+- 将本地仓库与github仓库关联
+
+  ```
+  git remote add origin git@github.com:zxy13927069542/book.git
+  ```
+
+- 将本地仓库推送到远程仓库
+
+  ```
+  git push <远程主机名> <本地分支名>:<远程分支名>
+  git push -u origin master	//会在远端创建master分支
+  git push origin :master		//表示删除远端分支master
+  ```
+
+- 断开与远程仓库的连接
+
+  ```
+  git remote rm origin
+  ```
+
+
+
+
+
+## 克隆远程仓库
+
+```
+git clone git@github.com:zxy13927069542/book.git
+```
+
+你也许还注意到，GitHub给出的地址不止一个，还可以用`https://github.com/michaelliao/gitskills.git`这样的地址。实际上，Git支持多种协议，默认的`git://`使用ssh，但也可以使用`https`等其他协议。
+
+使用`https`除了速度慢以外，还有个最大的麻烦是每次推送都必须输入口令，但是在某些只开放http端口的公司内部就无法使用`ssh`协议而只能用`https`。
+
+
+
+## 从远程仓库拉取
+
+```
+git pull <remote> <branch>
+```
+
+
+
 ### Git无法正常显示中文
 
 ![image-20211127200558753](Go环境变量配置.assets/image-20211127200558753.png)
