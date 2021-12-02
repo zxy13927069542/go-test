@@ -1,28 +1,19 @@
 package main
 
-import (
-	"fmt"
-	"github.com/go-resty/resty/v2"
-	"log"
-)
-
-func main() {
-	//创建一个客户端
-	client := resty.New()
-	//调用客户端创建一个请求
-	url := "http://www.baidu.com"
-	resp, err := client.R().Get(url)
-	if err != nil {
-		log.Fatalln("请求", url, "失败", err)
+/*func main() {
+	arr := []int{}	//代表小球
+	sums := make(map[int]int)	//存储两数之和
+	var sum int
+	for i := 0; i < len(arr); i++ {
+		for j := 0; j < len(arr); j++ {
+			sum = arr[i] + arr[j]
+			//将两数之和存入map
+			sums[sum] = 1
+			//判断m-sum即另外两数之和是否存在
+			if _, ok := sums[m - sum]; ok {
+				return Yes
+			}
+		}
 	}
-
-	fmt.Println("StatusCode:", resp.StatusCode())
-	str := string(resp.Body())
-	fmt.Printf(str)
-	// all, err := ioutil.ReadAll(response.RawResponse.Body)
-	// response.RawResponse.Body.Close()
-	// if err != nil {
-	// 	log.Fatalln("读取response.RawResponse.Body失败", err)
-	// }
-	// fmt.Println("RawBody:", string(all))
-}
+	return No
+}*/
