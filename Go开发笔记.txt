@@ -1,3 +1,230 @@
+## Go环境变量配置
+
+- 删掉环境变量中有关`Go`的配置，比如`GOROOT`,`GOPATH`,注意别把`GOLAND`的配置删了
+
+- 安装Go
+
+  - 安装go之后会自动帮你配置好环境变量，其中`GOROOT`配置在系统变量的`Path`中，如图所示:
+
+  ![image-20211127192441453](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127192441453-16381659904831.png)
+
+  - `GOPATH`配置在用户变量的`GOPATH`和`Path`中,如图所示:
+
+    ![image-20211127192319304](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127192319304-16381659904832.png)
+
+![image-20211127192352675](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127192352675-16381659904843.png)
+
+- 修改环境变量,虽然默认的也能用，但是不符合我们的使用习惯，所以我们可以修改环境变量来满足个人习惯
+
+  - 修改`GOPATH`，需要修改的有两个点，第一个点是用户环境变量中的`GOPATH`，第二个点是用户环境变量中的`Path`,按下图修改:
+
+  ![image-20211127192550268](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127192550268-16381659904844.png)
+
+  ![image-20211127192704102](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127192704102-16381662013837.png)
+
+  - 修改`GOROOT`，同样需要修改两个点，第一点是在系统变量中新增`GOROOT`，第二是修改系统变量中的`Path`，按下图修改：
+
+    ![image-20211127193407759](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127193407759-16381659904845.png)
+
+    ![image-20211127193454709](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127193454709-16381659904846.png)
+
+- 打开`cmd`,输入`go env`，查看环境是否配置正确
+
+
+
+
+
+## Git
+
+
+
+### 安装
+
+### 设置用户名和邮箱
+
+```go
+git config --global user.name	"zxy"								//设置用户名
+git config --global user.email	"zhengxiaoying666@gmail.com"		//设置邮箱
+```
+
+
+
+### 创建仓库
+
+在项目路径下执行命令,命令执行后会在项目路径下生成`.git`目录,该目录为隐藏目录
+
+```
+git init
+```
+
+
+
+### 将文件提交到仓库暂存区
+
+```
+git add [file1] [file2] ...		//添加一个或多个文件到暂存区
+git add [dir]					//添加指定目录到暂存区,包括子目录
+git add .						//添加当前目录下所有文件到暂存区
+git add all						//提交全部修改
+```
+
+
+
+### 将暂存区内的修改提交到本地仓库
+
+```
+git commit -m "第一次提交"		
+```
+
+> `-m`后面输入的是本次提交的说明
+
+
+
+
+
+### 查看仓库状态
+
+```
+git status
+```
+
+
+
+### 查看提交历史
+
+```
+git log 		//--pretty=oneline 只显示版本号和提交消息
+```
+
+
+
+### 版本表示
+
+- `HEAD`表示当前版本,`HEAD^`表示上个版本,`HEAD^^`表示上上个版本,`HEAD~50`表示上50个版本
+
+- 版本号，版本号可以独特表示某一版本
+
+### 版本回退
+
+基于上述的版本表示，可以使用`git reset`来进行版本回退，从而回退到某个版本
+
+```
+git reset --hard HEAD^		//回退到上个版本
+git reset --hard 5a97cde	//回退到版本号为5a97cde的版本
+```
+
+版本回退图解：
+
+![image-20211127203437617](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127203437617.png)
+
+Git在内部有个指向当前版本的`HEAD`指针，当你回退版本的时候，仅仅只是修改`HEAD`的指向而已
+
+从最新的版本`append GPL`回退到`add distributed`后又想回到`append GPL`怎么处理？
+
+```
+git reflog	//git reflog用来记录你的每一次命令
+```
+
+![image-20211127204302082](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127204302082.png)
+
+前面的几位数字就是版本号,我们可以使用该版本号来回退版本
+
+
+
+### 撤销修改
+
+```
+git checkout -- file1	//让这个文件回到最近一次git commit或git add时的状态
+git reset HEAD <file>	//可以把暂存区的修改撤销掉（unstage）
+git rm --cache <file> [-r [dir]]	//撤销add
+```
+
+小结：
+
+场景1：当你改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令`git checkout -- file`。
+
+场景2：当你不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，第一步用命令`git reset HEAD <file>`，就回到了场景1，第二步按场景1操作。
+
+场景3：已经提交了不合适的修改到版本库时，想要撤销本次提交，则需要版本回退，不过前提是没有推送到远程库。
+
+
+
+## 生成SSH key
+
+```
+ssh-keygen -t rsa -C "zhengxiaoying666@gmail.com"
+```
+
+此命令会在用户主目录下的`.ssh`目录下生成`id_rsa`和`id_rsa_pub`两个文件，如果已有这两个文件则不用执行此命令
+
+- 在github创建ssh，将公钥`id_rsa_pub`的内容复制到github的`SSH Keys`上
+
+- 创建github仓库
+
+- 将本地仓库与github仓库关联
+
+  ```
+  git remote add origin git@github.com:zxy13927069542/book.git
+  ```
+
+- 将本地仓库推送到远程仓库
+
+  ```
+  git push <远程主机名> <本地分支名>:<远程分支名>
+  git push -u origin master	//会在远端创建master分支
+  git push origin :master		//表示删除远端分支master
+  ```
+
+- 断开与远程仓库的连接
+
+  ```
+  git remote rm origin
+  ```
+
+
+
+
+
+## 克隆远程仓库
+
+```
+git clone git@github.com:zxy13927069542/book.git
+```
+
+你也许还注意到，GitHub给出的地址不止一个，还可以用`https://github.com/michaelliao/gitskills.git`这样的地址。实际上，Git支持多种协议，默认的`git://`使用ssh，但也可以使用`https`等其他协议。
+
+使用`https`除了速度慢以外，还有个最大的麻烦是每次推送都必须输入口令，但是在某些只开放http端口的公司内部就无法使用`ssh`协议而只能用`https`。
+
+
+
+## 从远程仓库拉取
+
+```
+git pull <remote> <branch>
+```
+
+
+
+
+
+### Git无法正常显示中文
+
+![image-20211127200558753](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127200558753.png)
+
+```
+git config --global core.quotepath false
+```
+
+输入此命令后即可正常显示
+
+![image-20211127200732300](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211127200732300.png)
+
+
+
+
+
+
+
 ### 常用命令
 
 #### go build
@@ -21,6 +248,18 @@
 #### go fmt
 
 `go fmt 文件名或包名`可以格式化代码
+
+
+
+### go env
+
+- 设置GOPROXY
+
+  ```go
+  go env -w GOPROXY=direct
+  ```
+
+  
 
 
 
@@ -111,6 +350,20 @@ import _ "go-test/ying/package"
        ```
 
         重启就可以了
+
+
+
+## iota
+
+```go
+//每遇到一个const关键字，iota初始化为0，每新增一行变量声明iota加一
+const (
+   A1 = iota 	//0
+   A2   		//1
+   A3  			//2
+)
+fmt.Println(A1, A2, A3)
+```
 
 
 
@@ -748,17 +1001,10 @@ type Person struct {
 - 使用匿名结构体来进行实例化
 
   ```go
-  var boy struct {
-  name string
-  age  int
-  }
-  fmt.Printf("boy的类型为: %T\n", boy)	//boy的类型为: struct { name string; age int }
-  fmt.Printf("%v\n",boy)				  //{ 0}
-  p2.age = 12
-  p2.hobby = []string{"打球"}
-  p2.name = "郑晓颖"
-  p2.sex = "男"
-  fmt.Println(p2) //&{郑晓颖 12 男 [打球]}
+  var user struct{Name string; Age int}
+  user.Name = "小王子"
+  user.Age = 18
+  fmt.Printf("%#v\n", user)
   ```
 
 - 使用&取地址符来进行实例化，相当于new操作
@@ -2085,6 +2331,33 @@ func print() {
 
 
 
+
+
+## strings
+
+### Join
+
+```go
+func Join(a []string, sep string) string
+```
+
+将一系列字符串连接为一个字符串，之间用sep来分隔。
+
+Example
+
+```go
+s := []string{"foo", "bar", "baz"}
+fmt.Println(strings.Join(s, ", "))
+```
+
+Output:
+
+```go
+foo, bar, baz
+```
+
+
+
 ## 文件操作
 
 
@@ -2339,6 +2612,50 @@ func CopyFile(src, des string) {
 
 }
 ```
+
+
+
+## builtin
+
+
+
+### Panic()
+
+```
+func panic(v interface{})
+```
+
+内建函数panic停止当前Go程序的正常执行。当函数F调用panic时，F的正常执行就会立刻停止。F中defer的所有函数先入后出执行后，F返回给其调用者G。G如同F一样行动，层层返回，直到该Go程序中所有函数都按相反的顺序停止执行。之后，程序被终止，而错误情况会被报告，包括引发该恐慌的实参值，此终止序列称为恐慌过程。
+
+```go
+func main() {
+   go func() {
+      fmt.Println("func before")
+      panic("bbb")	
+      time.Sleep(time.Minute)
+      fmt.Println("func after")
+   }()
+   fmt.Println("main before")	
+   time.Sleep(time.Minute)
+   fmt.Println("main after")
+}
+```
+
+> 就算在goroutine中调用，main函数也会被终止
+
+```go
+main before
+func before
+panic: bbb	//panic执行后程序终止
+goroutine 19 [running]:
+main.main.func1()
+        D:/WorkSpace/GoWorks/go-test/ying/test/test.go:11 +0xa5
+created by main.main
+        D:/WorkSpace/GoWorks/go-test/ying/test/test.go:9 +0x45
+
+```
+
+
 
 
 
@@ -2776,6 +3093,60 @@ func main() {
 
 
 
+### Indent
+
+```go
+func Indent(dst *bytes.Buffer, src []byte, prefix, indent string) error
+```
+
+`json.Indent()`能够格式化json，prefix能设置前缀，indent能设置缩进
+
+```go
+//
+//  TestIndent
+//  @Description: 测试json.Indent()
+//  @param t
+//
+func TestIndent(t *testing.T) {
+	//创建匿名结构体变量
+	var person struct{
+		Name 	string
+		Age		int
+	}
+	person.Name = "郑晓颖"
+	person.Age = 22
+
+	//序列化person
+	jsonStr, err := json.Marshal(person)
+	if err != nil {
+		fmt.Println("序列化失败", err)
+		return
+	}
+	fmt.Println("Before:")
+	fmt.Println(string(jsonStr))
+
+	//格式化json
+	var buff bytes.Buffer
+	err = json.Indent(&buff, jsonStr, "", "\t")	//此处设置无前缀，每行缩进为"\t"
+	fmt.Println("After:")
+	fmt.Println(buff.String())
+}
+```
+
+输出结果：
+
+```go
+Before:
+{"Name":"郑晓颖","Age":22}
+After:
+{
+	"Name": "郑晓颖",
+	"Age": 22
+}
+```
+
+
+
 
 
 ## 单元测试
@@ -2806,5 +3177,436 @@ func TestDownload(t *testing.T) {
       }
    }
 }
+```
+
+
+
+### 只测试单个函数
+
+```shell
+go test -v book_test.go -run TestBookModel
+```
+
+> `-run`后加要测试的函数
+
+
+
+## flag
+
+flag用来接收命令行参数
+
+
+
+### flag 参数类型
+
+flag 包支持的命令行参数类型有 bool、int、int64、uint、uint64、float、float64、string、duration，如下表所示：
+
+| flag 参数      | 有效值                                                       |
+| -------------- | ------------------------------------------------------------ |
+| 字符串 flag    | 合法字符串                                                   |
+| 整数 flag      | 1234、0664、0x1234 等类型，也可以是负数                      |
+| 浮点数 flag    | 合法浮点数                                                   |
+| bool 类型 flag | 1、0、t、f、T、F、true、false、TRUE、FALSE、True、False      |
+| 时间段 flag    | 任何合法的时间段字符串，如“300ms”、“-1.5h”、“2h45m”， 合法的单位有“ns”、“us”、“µs”、“ms”、“s”、“m”、“h” |
+
+
+
+### 接收命令行参数的方法
+
+- #### flag.Type()
+
+  `flag.Type()`可以定义一个用来接收命令行参数的变量，基本格式如下：
+
+  ```
+  flag.Type(flag 名, 默认值, 帮助信息) *Type
+  ```
+
+  Type 可以是 Int、String、Bool 等，返回值为一个相应类型的指针
+
+  ```
+  flag.String() *string
+  flag.Int() *int
+  ...
+  ```
+
+- #### flag.TypeVar()
+
+  `flag.TypeVar()`能将 flag 绑定到一个已有变量上，基本格式如下：
+
+  ```
+  flag.TypeVar(Type 指针, flag 名, 默认值, 帮助信息)
+  ```
+
+  TypeVar 可以是 IntVar、StringVar、BoolVar 等,无返回值
+
+  ```
+  flag.IntVar()
+  flag.Stringvar()
+  ...
+  ```
+
+> 使用`flag.Type()`得到的是指针类型的变量，使用`flag.TypeVar()`得到的是值类型的变量
+
+### flag.Parse()
+
+`flag.Parse()`解析命令行参数并存储到已绑定好的变量,**必须在所有flag都注册好而未访问其值时执行。未注册却使用flag -help时，会返回ErrHelp**
+
+
+
+### 常用函数
+
+```go
+flag.Args()  //返回未被解析的参数，以 []string 类型
+flag.NArg()  //返回未被解析的参数个数
+flag.NFlag() //返回被解析的参数个数
+```
+
+
+
+案例：
+
+```go
+//直接返回变量指针
+var id = flag.String("id", "0", "id")
+var name = flag.String("name", "郑晓颖", "name")
+var age = flag.Int("age", 22, "age")
+var other int
+
+func init() {
+   //将flag与现有变量绑定
+   flag.IntVar(&other, "other", 1, "other")
+}
+
+func main() {
+   //解析运行命令参数到指定的变量
+   flag.Parse()
+   fmt.Println("没被解析的变量:", flag.Args())
+   fmt.Println("没被解析的变量数:", flag.NArg())
+   fmt.Println("被解析的变量数:", flag.NFlag())
+   for i := 0; i < flag.NArg(); i++ {
+      fmt.Println(flag.Args()[i])
+   }
+   fmt.Println("id:", *id)
+   fmt.Println("name:", *name)
+   fmt.Println("age:", *age)	//这里是指针
+   fmt.Println("other:", other)	//这里是值
+}
+```
+
+使用命令行执行
+
+```go
+go run flag.go -id 1 -name "郑兵颖" -age 23 -other 0 333	//这里333是不被解析的参数
+```
+
+使用goland执行
+
+![image-20211123160131182](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211123160131182.png)
+
+结果
+
+![image-20211123160238128](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211123160238128.png)
+
+
+
+
+
+## go-zero
+
+### 准备工作
+
+- 安装 `protoc-gen-go`
+
+  ```
+  go get -u github.com/golang/protobuf/protoc-gen-go@v1.3.2
+  ```
+
+- 安装 `protoc`
+
+  ```
+  wget https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protoc-3.14.0-linux-x86_64.zip
+  unzip protoc-3.14.0-linux-x86_64.zip
+  mv bin/protoc /usr/local/bin/
+  ```
+
+- 安装 goctl 工具
+
+  ```
+  GO111MODULE=on GOPROXY=https://goproxy.cn/,direct go get -u github.com/tal-tech/go-zero/tools/goctl
+  ```
+
+
+
+### 开发流程
+
+- 创建api模板文件，并编写api
+
+  ```
+  goctl api -o test.api
+  ```
+
+- 根据编写好的api生成api代码
+
+  ```
+  goctl api go -api test.api -dir .
+  ```
+
+- 测试api
+
+  ```
+  go run test.go -f etc/test-api.yaml
+  ```
+
+- 编写业务代码
+
+
+
+### Tag
+
+ tag定义和golang中json tag语法一样，除了json tag外，go-zero还提供了另外一些tag来实现对字段的描述， 详情见下表。
+
+| tag key | 描述                                                         | 提供方  | 有效范围          | 示例            |
+| ------- | ------------------------------------------------------------ | ------- | ----------------- | --------------- |
+| json    | json序列化tag                                                | golang  | request、response | `json:"fooo"`   |
+| path    | 路由path，如`/foo/:id`                                       | go-zero | request           | `path:"id"`     |
+| form    | 标志请求体是一个form（POST方法时）或者一个query(GET方法时`/search?name=keyword`) | go-zero | request           | `form:"name"`   |
+| header  | HTTP header，如 `Name: value`                                | go-zero | request           | `header:"name"` |
+
+- path
+
+  ```go
+  type TestReq struct {
+  	Id int `path:"id"`
+  }
+  
+  //在service中定义相应的路由,id会作为参数传给TestReq
+  get /:id(TestReq)
+  
+  localhost:8888/3	//TestReq.Id=3
+  localhost:8888/4	//TestReq.Id=4
+  localhost:8888/5	//TestReq.Id=5
+  ```
+
+- form
+
+  ```go
+  type TestReq struct {
+  	Id int `form:"id"`
+  }
+  
+  get /test(TestReq)
+  
+  localhost:8888/test?id=1	//TestReq.Id=1
+  localhost:8888/test?id=2	//TestReq.Id=2
+  localhost:8888/test?id=3	//TestReq.Id=3
+  ```
+
+- json
+
+  ```go
+  type TestReq struct {
+  	Id int `json:"id"`
+  }
+  
+  get /test(TestReq)
+  ```
+
+  使用postman测试接口
+
+  - 设置headers
+
+    ![image-20211126093947043](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211126093947043.png)
+
+  - 编写测试json
+
+    ![image-20211126094028933](D:\WorkSpace\GoWorks\go-test\Go开发笔记.assets\image-20211126094028933.png)
+
+
+
+### tag修饰符
+
+常见参数校验描述
+
+| tag key  | 描述                                  | 提供方  | 有效范围 | 示例                         |
+| -------- | ------------------------------------- | ------- | -------- | ---------------------------- |
+| optional | 定义当前字段为可选参数                | go-zero | request  | `json:"name,optional"`       |
+| options  | 定义当前字段的枚举值,多个以竖线\|隔开 | go-zero | request  | `json:"gender,options=male"` |
+| default  | 定义当前字段默认值                    | go-zero | request  | `json:"gender,default=male"` |
+| range    | 定义当前字段数值范围                  | go-zero | request  | `json:"age,range=[0:120]"`   |
+
+- optional
+
+  ```go
+  type TestReq struct {
+  	Id		int 	`json:"id"`
+  	Name	string	`json:"name,optional"`
+  }
+  
+  get /test(TestReq)
+  ```
+
+  请求json
+
+  ```json
+  {
+      "id":"30"	//即使少了Name字段也不报错
+  }
+  ```
+
+  
+
+
+
+
+
+
+
+## gorm
+
+
+
+### 表名TableName
+
+您可以实现 `Tabler` 接口来更改默认表名，例如：
+
+```go
+type Tabler interface {
+    TableName() string
+}
+
+// TableName 会将 User 的表名重写为 `profiles`
+func (User) TableName() string {
+  return "profiles"
+}
+```
+
+
+
+### 列名
+
+根据约定，数据表的列名使用的是 struct 字段名的 `蛇形命名`
+
+```
+type User struct {
+  ID        uint      // 列名是 `id`
+  Name      string    // 列名是 `name`
+  Birthday  time.Time // 列名是 `birthday`
+  CreatedAt time.Time // 列名是 `created_at`
+}
+```
+
+您可以使用 `column` 标签或 [`命名策略`](https://gorm.io/zh_CN/docs/conventions.html#naming_strategy) 来覆盖列名
+
+```
+type Animal struct {
+  AnimalID int64     `gorm:"column:beast_id"`         // 将列名设为 `beast_id`
+  Birthday time.Time `gorm:"column:day_of_the_beast"` // 将列名设为 `day_of_the_beast`
+  Age      int64     `gorm:"column:age_of_the_beast"` // 将列名设为 `age_of_the_beast`
+}
+```
+
+
+
+
+
+## gjson
+
+
+
+### 安装
+
+```go
+go get github.com/tidwall/gjson
+```
+
+
+
+### Get
+
+根据指定路径搜索json串
+
+```go
+func Get(json, path string) Result
+```
+
+```json
+{
+    "name": {"first": "Tom", "last": "Anderson"},
+    "age":37,
+    "children": ["Sara","Alex","Jack"],
+    "friends": [
+      {"first": "James", "last": "Murphy"},
+      {"first": "Roger", "last": "Craig"}
+    ]
+}
+```
+
+- 通过`.`来分割路径
+
+  ```
+  "name.last"          >> "Anderson"
+  ```
+
+- 可以使用通配符`*`和`?`，也可以使用转义字符`\`对它们转义
+
+- 通过下标访问数组元素
+
+  ```go
+  "children.1"         >> "Alex"
+  "child*.2"           >> "Jack"
+  "c?ildren.0"         >> "Sara"
+  ```
+
+- 通过`#`获取数组元素个数或者遍历
+
+  ```go
+  "children.#"         >> 3					//获取元素个数
+  "friends.#.first"    >> ["James","Roger"]	//遍历
+  ```
+
+- 直接获取元素
+
+  ```go
+  "children"           >> ["Sara","Alex","Jack"]
+  ```
+
+  ```go
+  s1 := `{
+     "name": {"first": "Tom", "last": "Anderson"},
+     "age":37,
+     "children": ["Sara","Alex","Jack"],
+     "friends": [
+       {"first": "James", "last": "Murphy"},
+       {"first": "Roger", "last": "Craig"}
+     ]
+  }`
+  
+  name := gjson.Get(s1, "name")
+  name_last := gjson.Get(s1, "name.last")
+  children_1 := gjson.Get(s1, "children.1")
+  chil_1 := gjson.Get(s1, "chil*.1")
+  chil_ren_1 := gjson.Get(s1, "chil?ren.1")
+  children_num := gjson.Get(s1, "children.#")
+  children := gjson.Get(s1, "friends.#.first")
+  
+  fmt.Println("name:", name)					//name: {"first": "Tom", "last": "Anderson"}
+  fmt.Println("name_last:", name_last)		//name_last: Anderson
+  fmt.Println("children_1:", children_1)		//children_1: Alex
+  fmt.Println("chil_1:", chil_1)				//chil_1: Alex
+  fmt.Println("chil_ren_1:", chil_ren_1)		//chil_ren_1: Alex
+  fmt.Println("chilren_num:", children_num)	//chilren_num: 3
+  fmt.Println("chilren:", children)			//chilren: ["James","Roger"]
+  ```
+
+  
+
+
+
+## resty
+
+### 安装
+
+```go
+go get -u github.com/go-resty/resty/v2
 ```
 
