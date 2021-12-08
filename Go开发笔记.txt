@@ -1447,6 +1447,14 @@ func main() {
 
 
 
+### 结构体判空
+
+```go
+func DeepEqual(x, y interface{}) bool
+```
+
+
+
 ## 方法
 
 Go语言中的`方法（Method）`是一种作用于特定类型变量的函数，类似于java中的成员函数
