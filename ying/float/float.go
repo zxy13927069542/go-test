@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/shopspring/decimal"
+	"math"
+	"strconv"
+)
 
 func main() {
 	// a := 0.48
@@ -25,4 +30,30 @@ func main() {
 	fmt.Printf("a的值为%v,类型为%T\n", a, a) //0.42541116	float32
 	fmt.Println(a == 0.4254111515151)  //true 0.42541116 == 0.4254111515151 ?
 
+}
+
+//
+//  RetainValidNumber
+//  @Description: 保留有效数字
+//  @param f
+//  @param n 要保留的位数
+//  @return string
+//
+func RetainValidNumber(f float64, n int) string {
+	//获取整数
+	trunc := int(math.Trunc(f))
+
+	//计算要保留的小数位数
+	length := len(strconv.Itoa(trunc))
+
+	//四舍五入保留有效数字
+	var rtValue float64
+	if n <= length {
+		return strconv.Itoa(trunc)[:n]
+	} else {
+		rtValue, _ = decimal.NewFromFloat(f).Round(int32(n - length)).Float64()
+
+		//float64 -> string
+		return strconv.FormatFloat(rtValue, 'f', n-length, 64)
+	}
 }
