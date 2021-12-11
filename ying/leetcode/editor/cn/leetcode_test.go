@@ -20,3 +20,9 @@ func Test1034(t *testing.T) {
 	arr = colorBorder(arr, 1, 3, 1)
 	fmt.Println(arr)
 }
+
+func Test748(t *testing.T) {
+	str := "1s3 456"
+	words := []string{"looks", "pest", "stew", "show"}
+	shortestCompletingWord(str, words)
+}
