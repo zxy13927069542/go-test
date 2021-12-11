@@ -369,6 +369,40 @@ fmt.Println(A1, A2, A3)
 
 
 
+## float
+
+
+
+### 保留有效数字
+
+```go
+//
+//  RetainValidNumber
+//  @Description: 保留有效数字
+//  @param f
+//  @param n 要保留的位数
+//  @return string
+//
+func RetainValidNumber(f float64, n int) string {
+   //获取整数
+   trunc := int(math.Trunc(f))
+
+   //计算要保留的小数位数
+   length := len(strconv.Itoa(trunc))
+
+   //四舍五入保留有效数字
+   var rtValue float64
+   if n <= length {
+      return strconv.Itoa(trunc)[:n]
+   } else {
+      rtValue, _ = decimal.NewFromFloat(f).Round(int32(n - length)).Float64()
+
+      //float64 -> string
+      return strconv.FormatFloat(rtValue, 'f', n-length, 64)
+   }
+}
+```
+
 
 
 ## 数组
@@ -3186,6 +3220,14 @@ After:
 
 
 ## 单元测试
+
+
+
+### 坑
+
+- **单元测试中的文件路径均要以单元测试文件为起始**
+
+
 
 ### 基础单元测试
 
