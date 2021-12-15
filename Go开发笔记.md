@@ -3687,3 +3687,41 @@ func Get(json, path string) Result
 ```go
 go get -u github.com/go-resty/resty/v2
 ```
+
+
+
+
+
+## redis
+
+### 安装
+
+#### windows
+
+redis官方不推荐在windows下使用redis，所以在windows下没有官方版本，不过可以用其他人维护的版本
+
+```go
+https://github.com/tporadowski/redis/releases
+```
+
+这里我们不下载安装包，而是下载源码后解压运行
+
+```go
+Redis-x64-5.0.14.zip
+```
+
+在解压目录下运行
+
+```go
+redis-server.exe redis.windows.conf
+```
+
+即可启动redis服务端，如果不加`redis.windows.conf`则会使用默认的配置文件，所以这里可以省略
+
+启动服务端后再另起一个窗口，运行
+
+```cmd
+redis-cli.exe -h 127.0.0.1 -p 6379
+```
+
+即可启动客户端对服务端进行操作
