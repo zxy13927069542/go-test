@@ -149,7 +149,7 @@ git rm --cache <file> [-r [dir]]	//撤销add
 
 
 
-## 生成SSH key
+### 生成SSH key
 
 ```
 ssh-keygen -t rsa -C "zhengxiaoying666@gmail.com"
@@ -185,7 +185,7 @@ ssh-keygen -t rsa -C "zhengxiaoying666@gmail.com"
 
 
 
-## 克隆远程仓库
+### 克隆远程仓库
 
 ```
 git clone git@github.com:zxy13927069542/book.git
@@ -197,7 +197,7 @@ git clone git@github.com:zxy13927069542/book.git
 
 
 
-## 从远程仓库拉取
+### 从远程仓库拉取
 
 ```
 git pull <remote> <branch>
@@ -223,9 +223,17 @@ git config --global core.quotepath false
 
 
 
+### git操作步骤
 
+改完代码，先commit到本地，再pull远程仓库的修改，合并修改后再push，在这个合并的过程中，可能会出现
 
+```go
+Merge remote-tracking branch 'origin/dev' into dev
+```
 
+![image-20211217094924741](Go开发笔记.assets/image-20211217094924741.png)
+
+出现了两条commit消息，为了消除这条消息，同时又保留修改，我们可以进行`Reset dev to this commit`操作
 
 ### 常用命令
 
