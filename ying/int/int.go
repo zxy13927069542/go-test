@@ -20,4 +20,6 @@ func main() {
 	d := 3
 	fmt.Printf("变量类型:%T \n", d) //变量类型int
 
+
+
 }

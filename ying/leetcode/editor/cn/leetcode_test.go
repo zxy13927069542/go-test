@@ -26,3 +26,9 @@ func Test748(t *testing.T) {
 	words := []string{"looks", "pest", "stew", "show"}
 	shortestCompletingWord(str, words)
 }
+
+func Test475(t *testing.T) {
+	houses := []int{1, 1, 1, 1, 1, 1, 999, 999, 999, 999, 999}
+	heaters := []int{499, 500, 501}
+	fmt.Println(findRadius(houses, heaters))
+}
