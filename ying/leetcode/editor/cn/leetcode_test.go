@@ -26,3 +26,8 @@ func Test748(t *testing.T) {
 	words := []string{"looks", "pest", "stew", "show"}
 	shortestCompletingWord(str, words)
 }
+
+func Test93(t *testing.T) {
+	s := "25525511135"
+	restoreIpAddresses(s)
+}
