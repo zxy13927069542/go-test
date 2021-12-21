@@ -18,3 +18,4 @@ func main() {
 	fmt.Scanf("1:%s 2:%d 3:%s\n", &name, &age, &sex) //输入1:name 2:23 3:nan
 	fmt.Println(name, age, sex)                      //输出name 23 nan
 }
+

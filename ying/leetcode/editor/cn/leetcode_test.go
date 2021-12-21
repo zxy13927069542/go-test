@@ -27,6 +27,12 @@ func Test748(t *testing.T) {
 	shortestCompletingWord(str, words)
 }
 
+func Test475(t *testing.T) {
+	houses := []int{1, 1, 1, 1, 1, 1, 999, 999, 999, 999, 999}
+	heaters := []int{499, 500, 501}
+	fmt.Println(findRadius(houses, heaters))
+}
+
 func Test93(t *testing.T) {
 	s := "25525511135"
 	restoreIpAddresses(s)
