@@ -3899,6 +3899,29 @@ redis-cli.exe -h 127.0.0.1 -p 6379
 
 
 
+#### linux
+
+安装redis
+
+```go
+sudo apt update
+sudo apt install redis-server
+```
+
+启动redis-server
+
+```
+redis-server
+```
+
+验证server是否启动成功，新开一个终端
+
+```
+redis-cli
+```
+
+输入ping，如果返回pong说明启动成功
+
 
 
 ## goland远程调试

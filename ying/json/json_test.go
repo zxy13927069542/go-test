@@ -36,3 +36,30 @@ func TestIndent(t *testing.T) {
 	fmt.Println("After:")
 	fmt.Println(buff.String())
 }
+
+//
+// TestUnMarshal
+//  @Description: 测试反序列化
+//  @param t
+//
+func TestUnMarshal(t *testing.T) {
+	type Person struct {
+		Id   string `json:"id"`
+		Name string `json:"name"`
+	}
+
+	//  测试类型不同能否正确转换
+	jsonStr := `{
+    "id": 9999,
+    "name": "zxy"
+	}`
+
+	var person Person
+	err := json.Unmarshal([]byte(jsonStr), &person)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("person: %+v\n", person)
+}
