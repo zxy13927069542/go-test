@@ -284,7 +284,7 @@ git config --global --unset https.proxy			//取消https代理
 
 
 
-### go env
+#### go env
 
 - 设置GOPROXY
 
@@ -327,6 +327,29 @@ go get golang.org/x/tools/cmd/godoc
 
 
 #### go mod init 项目名
+
+
+
+#### go mod tidy 
+
+根据`go.mod`文件下载依赖，需要配置终端代理
+
+终端代理设置
+
+```go
+vim ~/.bashrc
+// 在bashrc中新增两行
+export http_proxy=http://10.7.3.67:8080
+export https_proxy=http://10.7.3.67:8080
+
+source ~/.bashrc
+// 查看代理设置
+env |grep -i proxy
+
+// 取消代理
+unset http_proxy
+unset https_proxy
+```
 
 
 
