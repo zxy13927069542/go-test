@@ -4018,6 +4018,20 @@ config set 属性名 属性值	//修改配置
 
 
 
+### 中文乱码
+
+- 终端乱码
+
+  redis-cli终端默认不转义中文，所以需要在启动终端的时候需要手动指定
+
+  ```
+  redis-cli --raw
+  ```
+
+  
+
+
+
 ### 数据类型
 
 #### 字符串`string`
@@ -4176,8 +4190,142 @@ OK
 redis的`list`基于`Linked Lists`实现。
 
 ```
+//rpush
+//往list的尾部添加元素
+127.0.0.1:6379> rpush list1 A B C D E F
+(integer) 6
+
+//lrange
+//获取list指定区间内的元素 [a,b]区间为左闭右闭区间
+//0-第一个元素 -1-最后一个元素 -2-倒数第二个元素
+127.0.0.1:6379> lrange list1 0 5
+1) "A"
+2) "B"
+3) "C"
+4) "D"
+5) "E"
+6) "F"
+
 //lpush
-//往链表的头部添加元素
+//往list的头部添加元素
+127.0.0.1:6379> lpush list1 C
+(integer) 7
+127.0.0.1:6379> lrange list1 0 -1
+1) "C"
+2) "A"
+3) "B"
+4) "C"
+5) "D"
+6) "E"
+7) "F"
+
+//rpop
+//将元素从队列右侧出队，并返回该元素
+127.0.0.1:6379> rpop list1
+"F"
+127.0.0.1:6379> lrange list1 0 -1
+1) "C"
+2) "A"
+3) "B"
+4) "C"
+5) "D"
+6) "E"
+
+
+//lpop
+//左侧出队
+127.0.0.1:6379> lpop list1
+"C"
+127.0.0.1:6379> lrange list1 0 -1
+1) "A"
+2) "B"
+3) "C"
+4) "D"
+5) "E"
+
+
+//当队列中没有元素时，队列会被自动删除，此时再进行pop操作，会返回nil
+127.0.0.1:6379> exists list1
+(integer) 0
+127.0.0.1:6379> lpop list1
+(nil)
+
+
+//ltrim
+//ltrim能用一个区间截断队列，该区间为左闭右闭区间
+127.0.0.1:6379> rpush list1 A B C D E F G
+(integer) 7
+127.0.0.1:6379> lrange list1 0 -1
+1) "A"
+2) "B"
+3) "C"
+4) "D"
+5) "E"
+6) "F"
+7) "G"
+127.0.0.1:6379> ltrim list1 0 2
+OK
+127.0.0.1:6379> lrange list1 0 -1
+1) "A"
+2) "B"
+3) "C"
+
+//1、当key的值为空时，redis会自动删除该key
+//2、当我们往一个聚合结构添加元素时，如果该聚合结构为空，则会自动创建该聚合结构
+
+//llen
+//获取list的长度
+127.0.0.1:6379> lrange list1 0 -1
+1) "A"
+2) "B"
+3) "C"
+127.0.0.1:6379> llen list1
+(integer) 3
+```
+
+
+
+
+
+#### hash
+
+```redis
+//hmset key field val [field val]
+//hmset创建一个hashmap
+127.0.0.1:6379> hmset map1 name 郑晓颖 age 18
+OK
+
+//hget
+//hget能获取map中一个字段
+127.0.0.1:6379> hget map1 name
+郑晓颖
+
+//hgetall
+//hgetall能获取map中的所有字段
+127.0.0.1:6379> hgetall map1
+name
+郑晓颖
+age
+18
+
+//hmget key field [field]
+//hmget能获取多个指定字段的值
+127.0.0.1:6379> hmget map1 name sex
+郑兵颖
+男
+
+
+//hincrby
+//hincrby能单独对map中的某个字段进行自增
+127.0.0.1:6379> hincrby map1 age 10
+28
+127.0.0.1:6379> hgetall map1
+name
+郑兵颖
+age
+28
+sex
+男
 
 ```
 
@@ -4224,3 +4372,67 @@ redis的`list`基于`Linked Lists`实现。
   ![image-20211220093000662](Go开发笔记.assets/image-20211220093000662.png)
 
 - 配置完成后，现在linux运行dlv，再在goland点击debug即可远程调试
+
+
+
+## linux
+
+### 配置网络
+
+- ubuntu18.04
+
+  ```
+  vim /etc/netplan/01-network-manager-all.yaml
+  
+  //配置文件内容
+  network:
+    version: 2
+    #renderer: NetworkManager
+    ethernets:
+            ens33:
+                    dhcp4: no
+                    dhcp6: no
+                    addresses: [10.7.3.197/24]
+                    gateway4: 10.7.3.254
+                    nameservers:
+                            addresses: [10.7.0.10, 10.7.0.12]
+  
+  //让配置文件生效
+  sudo netplan apply
+  ```
+
+  
+
+### 设置代理
+
+- 设置系统代理
+
+  ```
+  vim /etc/profile
+  
+  //新增代理配置
+  #代理
+  export http_proxy="http://10.7.3.67:8080"
+  export https_proxy="http://10.7.3.67:8080"
+  
+  source /etc/profile
+  ```
+
+- 设置apt代理
+
+  ```
+  //新建apt配置文件
+  sudo touch /etc/apt/apt.conf.d/proxy.conf
+  
+  vim proxy.conf
+  
+  //新增两行
+  Acquire {
+  HTTP::proxy "http://10.7.3.67:8080";
+  HTTPS::proxy "http://10.7.3.67:8080";
+  }
+  
+  sudo apt update
+  ```
+
+  
