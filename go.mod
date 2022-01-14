@@ -9,5 +9,8 @@ require (
 	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	github.com/alexandrevicenzi/go-sse v1.6.0
+    github.com/pion/ion-log v1.2.1 // indirect
+    github.com/go-redis/redis/v7 v7.4.1
+
 
 )

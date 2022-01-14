@@ -4331,6 +4331,373 @@ sex
 
 
 
+#### set
+
+redis的`set`是`string`的无序排列。
+
+```
+//sadd key member [member ...]
+//新增set元素
+127.0.0.1:6379> sadd set1 A B C
+3
+
+//smembers key
+//查看set元素
+127.0.0.1:6379> smembers set1
+C
+B
+A
+
+//sismember key member
+//查看set中元素是否存在
+127.0.0.1:6379> sismember set1 D
+0
+127.0.0.1:6379> sismember set1 C
+1
+
+//sinter key [key ...]
+//sinter用来取set之间的交集
+127.0.0.1:6379> smembers set1
+C
+B
+A
+127.0.0.1:6379> smembers set2
+D
+C
+E
+127.0.0.1:6379> sinter set1 set2
+C
+
+
+//spop key [count]
+//spop从set中随机取出多个元素
+127.0.0.1:6379> spop set1 2
+B
+A
+127.0.0.1:6379> smembers set1
+C
+
+
+//scard key
+//scard能获取set中的元素数目
+127.0.0.1:6379> smembers set2
+D
+C
+E
+127.0.0.1:6379> scard set2
+3
+
+//srandmember key [count]
+//srandmember能从set随机获取元素，并且不会删除set中的元素
+127.0.0.1:6379> srandmember set2 2
+C
+D
+127.0.0.1:6379> smembers set2
+D
+C
+E
+
+```
+
+
+
+#### sorted set
+
+`sorted set`类似于`set`和`map`的混合结构。从`set`的方面讲，`sorted set`里面的元素都是唯一的字符串，所以说`sorted set`是`set`也不为过；从`map`的角度来看，`sorted set`包含一个类似于`map`中`key-value`的结构，对于每一个字符串，都有一个`score` 与其对应，其中字符串是`key`， `score`是`value`，`sorted set`也根据这个`score`来对`sorted set`中的元素进行排序，因此可以总结出一下特性：
+
+- **有序、唯一的字符串集合**
+
+另外还有一点就是`sorted set`的**排序依据**：
+
+- **元素`A`和元素`B`拥有不同的`score`，如果`A.score` > `B.score`，那么`A` > `B`**
+- **如果元素`A`和元素`B`的`score`相等，则按`字典`排序（即依次比较A，B的每一个字符的ACSII的大小，AAAAAAA, B， AAAAAAA < B，因为第一个字符A < B）**
+
+
+
+```
+//zadd key [NX|XX] [CH] [INCR] score member [score member ...]
+//zadd能往sorted set里新增元素
+127.0.0.1:6379> zadd persons 36 郑晓颖 28 郑兵颖 89 学霸 99 学神 100 老师
+5
+
+//zrange key start stop [WITHSCORES]
+//zrange能获取区间内的元素，左闭右闭，类似于lrange
+127.0.0.1:6379> zrange persons 0 -1
+郑兵颖
+91
+学霸
+学神
+郑晓颖
+老师
+127.0.0.1:6379> zrange persons 0 2
+郑兵颖
+91
+学霸
+
+//zrevrange key start stop [WITHSCORES]
+//zrevrange能反向获取区间内的元素
+127.0.0.1:6379> zrevrange persons 0 2
+老师
+郑晓颖
+学神
+
+//withscores选项
+//获取元素的同时返回score
+127.0.0.1:6379> zrange persons 0 -1 withscores
+郑兵颖
+28
+91
+36
+学霸
+89
+学神
+99
+郑晓颖
+99
+老师
+100
+
+//zcard key
+//类似于scard,用来获取sorted set的长度
+127.0.0.1:6379> zrange persons 0 -1
+郑兵颖
+91
+学霸
+学神
+郑晓颖
+老师
+127.0.0.1:6379> zcard persons
+6
+
+
+//zrangebyscore key min max [WITHSCORES] [LIMIT offset count]
+//获取score区间内的元素
+//-inf表示负无穷大
+127.0.0.1:6379> zrangebyscore persons -inf 50 withscores
+郑兵颖
+28
+91
+36
+
+
+//zremrangebyscore key min max
+//移除score区间内的元素,左闭右闭区间
+127.0.0.1:6379> zrange persons 0 -1 withscores
+学霸
+89
+学神
+99
+郑晓颖
+99
+老师
+100
+127.0.0.1:6379> zremrangebyscore persons 89 99
+3
+127.0.0.1:6379> zrange persons 0 -1 withscores
+老师
+100
+
+//zrank key member
+//获取指定元素下标
+127.0.0.1:6379> zrange persons 0 -1 withscores
+时崎狂三
+33
+静夜思
+44
+五条悟
+55
+老师
+100
+127.0.0.1:6379> zrank persons 五条悟
+2
+
+//zrangebylex key min max [LIMIT offset count]
+//获取字典范围内的元素
+127.0.0.1:6379> zrangebylex persons [A [F
+A
+AAAAAAAAAAAAAAAAA
+B
+BBBBBBBBB
+```
+
+
+
+#### bitmap
+
+`bitmap`并不是一种单独的数据类型，而是基于`string`的一组操作序列。
+
+```
+//setbit key offset value
+//将字符串的指定位设置为0或1，当指定位超过字符串当前长度时会自动扩容
+127.0.0.1:6379> setbit s1 3 1
+0
+
+//getbit key offset
+//获取指定位置的位值，当指定位置超过当前字符串长度时返回0
+127.0.0.1:6379> getbit s1 3
+1
+
+//bitop operation destkey key [key ...]
+//字符串按位操作，支持and、or、xor、not
+//s1 001
+127.0.0.1:6379> setbit s1 2 1
+0
+//s2 010
+127.0.0.1:6379> setbit s2 1 1
+0
+//s3 011
+127.0.0.1:6379> bitop or s3 s1 s2
+1
+
+//bitcount key [start end]
+//获取1的数目
+127.0.0.1:6379> bitcount s3
+2
+
+//bitpos key bit [start] [end]
+//获取区域内第一个1或0的位置
+127.0.0.1:6379> bitpos s3 0
+0
+127.0.0.1:6379> bitpos s3 1
+1
+
+```
+
+
+
+#### HyperLogLog
+
+用来进行`基数统计`的算法。
+
+什么是基数?
+
+比如数据集 {1, 3, 5, 7, 5, 7, 8}， 那么这个数据集的基数集为 {1, 3, 5 ,7, 8}, 基数(不重复元素)为5。 基数估计就是在误差可接受的范围内，快速计算基数。
+
+ HyperLogLog 只会根据输入元素来计算基数，而不会储存输入元素本身
+
+```
+//pfadd key element [element ...]
+//往指定数据集新增元素
+127.0.0.1:6379> pfadd p1 3
+1
+127.0.0.1:6379> pfadd p1 3
+0
+127.0.0.1:6379> pfadd p1 4
+1
+127.0.0.1:6379> pfadd p1 "ada"
+1
+127.0.0.1:6379> pfadd p1 ada
+0
+
+//pfcount key [key ...]
+//进行基数统计
+127.0.0.1:6379> pfcount p1
+3
+```
+
+
+
+### 事务
+
+> redis事务不保证原子性
+
+事务流程：
+
+1. 开启事务
+2. 命令入队
+3. 执行事务
+
+```
+//multi
+//开启事务
+127.0.0.1:6379> multi
+OK
+
+//命令入队
+127.0.0.1:6379> set s1 30
+QUEUED
+
+//exec
+//执行事务
+127.0.0.1:6379> exec
+OK
+127.0.0.1:6379> get s1
+30
+
+//discard
+//取消事务
+127.0.0.1:6379> multi
+OK
+127.0.0.1:6379> set s1 郑晓颖
+QUEUED
+127.0.0.1:6379> get s1
+QUEUED
+127.0.0.1:6379> discard
+OK
+127.0.0.1:6379> exec
+ERR EXEC without MULTI
+```
+
+
+
+### 锁
+
+- `WATCH` 使得 `EXEC`命令需要有条件地执行： 事务只能在所有被监视键都没有被修改的前提下执行， 如果这个前提不能满足的话，事务就不会被执行
+- 当`exec`命令执行后监视`watch`便会被解除
+
+```
+//watch key [key ...]
+//加乐观锁
+
+//事务正常执行
+127.0.0.1:6379> set money 100
+OK
+127.0.0.1:6379> set use 0
+OK
+127.0.0.1:6379> watch money
+OK
+127.0.0.1:6379> multi
+OK
+127.0.0.1:6379> decrby money 50
+QUEUED
+127.0.0.1:6379> incrby use 50
+QUEUED
+127.0.0.1:6379> exec
+50
+50
+
+//冲突
+//线程1
+127.0.0.1:6379> set money 100
+OK
+127.0.0.1:6379> set use 0
+OK
+127.0.0.1:6379> watch money
+OK
+127.0.0.1:6379> multi
+OK
+127.0.0.1:6379> decrby money 20
+QUEUED
+127.0.0.1:6379> incrby use 20
+QUEUED
+
+//线程2
+127.0.0.1:6379> incrby money 100
+200
+
+//线程1
+127.0.0.1:6379> exec
+
+127.0.0.1:6379> get money
+200
+127.0.0.1:6379> get use
+0
+
+//可以看到事务执行失败，线程1的修改并没有生效
+```
+
+
+
 ## goland远程调试
 
 ### 起因
