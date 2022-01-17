@@ -9,15 +9,17 @@ import (
 )
 
 var (
-	path   = flag.String("path", "./config.yaml", "配置文件路径")
-	config *Config
+	path   = flag.String("path", "config.yaml", "配置文件路径")
+	config Config
 )
 
+type Redis struct {
+	Addresses []string `yaml:"Addresses"`
+	Pwd       string   `yaml:"Pwd"`
+}
+
 type Config struct {
-	Redis struct {
-		Addresses []string
-		Pwd       string
-	}
+	Redis `yaml:"Redis"`
 }
 
 func Init() error {
@@ -33,7 +35,7 @@ func Init() error {
 		return err
 	}
 
-	err = yaml.Unmarshal(file, config)
+	err = yaml.Unmarshal(file, &config)
 	if err != nil {
 		log.Errorf("Unmarshal Config File Error! Reason: %v", err)
 		return err

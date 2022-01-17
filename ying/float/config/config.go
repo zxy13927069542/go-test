@@ -7,12 +7,12 @@ import (
 )
 
 type Node struct {
-	F float64 `yaml: "f"`
-	N int     `yaml: "n"`
+	F float64 `yaml:"f"`
+	N int     `yaml:"n"`
 }
 
 type Config struct {
-	Nodes []Node `yaml: "nodes"`
+	Nodes []Node `yaml:"nodes"`
 }
 
 func GetConfig() *Config {
