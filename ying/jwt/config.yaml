@@ -1,0 +1,3 @@
+Jwt:
+  AccessSecret: XXXXXXXXXXXXXX
+  AccessExpire: 10800

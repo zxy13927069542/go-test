@@ -6,6 +6,7 @@ require (
 	github.com/alexandrevicenzi/go-sse v1.6.0
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/go-resty/resty/v2 v2.7.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/pion/ion-log v1.2.1
 	github.com/shopspring/decimal v1.3.1
 	github.com/tidwall/gjson v1.11.0
