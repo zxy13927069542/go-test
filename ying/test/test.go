@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
+	"regexp"
 	"time"
 )
 
@@ -20,45 +20,14 @@ var HTTPTransport = &http.Transport{
 }
 
 func main() {
-	times := 100
-	uri := "http://www.baidu.com"
-	// uri := "http://www.baidu.com"
+	text := `POST /push HTTP/1.1
+Host: localhost
+Content-Type: Content-Type: application/json
+Content-Length: 426
 
-	// 短连接的情况
+{"topic":"CYGBase:RTDB-CYGBase:modify","body":"{\"name\":\"localsync\",\"node\":\".......................................-mingw-56\",\"topic\":\"CYGBase:RTDB-CYGBase:modify\",\"sn\":\"3F31D37D-9B5A-43c0-B6EA-76DC093BEED5\",\"data\":\"[{\\\"key\\\":\\\"CYGDW:Hash:GK:00505629ACBF:00505629ACBF\\\",\\\"tvModifys\\\":[{\\\"t\\\":\\\"online\\\",\\\"sv\\\":\\\"0\\\",\\\"dv\\\":\\\"0\\\",\\\"time\\\":\\\"1634527813090\\\"}]}]\"}"}`
+	compile, _ := regexp.Compile(`\{.*}`)
+	find := compile.Find([]byte(text))
 
-	start := time.Now()
-	client := http.Client{} // 初始化http的client
-	for i := 0; i < times; i++ {
-		req, err := http.NewRequest(http.MethodGet, uri, nil)
-		if err != nil {
-			panic("Http Req Failed " + err.Error())
-		}
-		resp, err := client.Do(req) // 发起请求
-		if err != nil {
-			panic("Http Request Failed " + err.Error())
-		}
-		defer resp.Body.Close()
-		fmt.Println(resp.Header)
-		ioutil.ReadAll(resp.Body)
-	}
-	fmt.Println("Orig GoNet Short Link", time.Since(start))
-	time.Sleep(time.Second * 10)
-
-	// 长连接的情况
-
-	//start2 := time.Now()
-	//client2 := http.Client{Transport: HTTPTransport} // 初始化一个带有transport的http的client
-	//for i := 0; i < times; i++ {
-	//	req, err := http.NewRequest(http.MethodGet, uri, nil)
-	//	if err != nil {
-	//		panic("Http Req Failed " + err.Error())
-	//	}
-	//	resp, err := client2.Do(req)
-	//	if err != nil {
-	//		panic("Http Request Failed " + err.Error())
-	//	}
-	//	defer resp.Body.Close()
-	//	ioutil.ReadAll(resp.Body) // 如果不及时从请求中获取结果，此连接会占用，其他请求服务复用连接
-	//}
-	//fmt.Println("Orig GoNet Long Link", time.Since(start2))
+	fmt.Println(string(find))
 }

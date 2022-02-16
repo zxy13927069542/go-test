@@ -2,12 +2,10 @@ package main
 
 import (
 	log "github.com/pion/ion-log"
+	"io"
 	"net/http"
+	"os"
 )
-
-type TestHandler struct {
-	str string
-}
 
 //
 // Establish
@@ -40,19 +38,43 @@ func HeartBeat(w http.ResponseWriter, r *http.Request) {
 
 func Push(w http.ResponseWriter, r *http.Request) {
 	log.Infof("Receive /push Message!")
+	io.Copy(os.Stdout, r.Body)
+	r.Body.Close()
 
 	w.Write([]byte("push success!"))
 
 }
 
+func Root(w http.ResponseWriter, r *http.Request) {
+	log.Infof("Receive / Message!")
+	io.Copy(os.Stdout, r.Body)
+	r.Body.Close()
+
+	w.Write([]byte("push success!"))
+
+}
+
+func Pulish(w http.ResponseWriter, r *http.Request) {
+	log.Infof("Receive /publish Message!")
+
+	w.Write([]byte("publish success!"))
+
+}
+
 func main() {
-	http.HandleFunc("/establish", Establish)
-	http.HandleFunc("/heartbeat", HeartBeat)
+	//http.HandleFunc("/establish", Establish)
+	//http.HandleFunc("/heartbeat", HeartBeat)
+	//http.HandleFunc("/", Root)
 	http.HandleFunc("/push", Push)
 
-	for {
-		//  如果设置ip的话会只监听目标主机的端口
-		http.ListenAndServe(":9999", nil)
+	//http.HandleFunc("/publish", Pulish)
+
+	//for {
+	//  如果设置ip的话会只监听目标主机的端口
+	err := http.ListenAndServe(":9999", nil)
+	if err != nil {
+		log.Errorf("%v", err)
 	}
+	//}
 
 }

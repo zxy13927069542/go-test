@@ -55,6 +55,10 @@
 ```go
 git config --global user.name	"zxy"								//设置用户名
 git config --global user.email	"zhengxiaoying666@gmail.com"		//设置邮箱
+
+git config --list	//查看git配置
+git config --global --unset 配置名	//取消全局配置
+git config --global --edit	//编辑配置文件
 ```
 
 
@@ -3778,6 +3782,54 @@ type Animal struct {
 ```
 
 
+
+### count与limit、offset
+
+```sql
+SELECT count(*) as count FROM `t_assetInfo` LIMIT 10 OFFSET 1
+SELECT * FROM (SELECT count(*) as count From `t_assetInfo`) LIMIT 10 OFFSET 1
+```
+
+> 这两条sql语句效果一样
+
+sql语句中，count的优先级比limit和offset高，所以先count(*)计数得到一条记录,再对结果进行分页过滤，从而导致得不到预期结果
+
+- 先进行count得到的记录
+
+![image-20220209113231729](Go开发笔记.assets/image-20220209113231729.png)
+
+- 在count的基础上再进行limit和offset得到的结果
+
+  ![image-20220209113739809](Go开发笔记.assets/image-20220209113739809.png)
+
+
+
+回到正题，先看看以下代码
+
+```go
+var assets []AssetInfo
+var count int64
+err := m.db.Limit(size).Offset(offset).Find(&assets).Count(&count).Error
+```
+
+在`gorm`中，这第三条语句会被分解成两条sql语句
+
+```sql
+SELECT * FROM `t_assetInfo` WHERE `t_assetInfo`.`deleted_at` IS NULL LIMIT 10 OFFSET 10
+```
+
+```sql
+SELECT count(*) FROM `t_assetInfo` WHERE `t_assetInfo`.`deleted_at` IS NULL LIMIT 10 OFFSET 10
+```
+
+第一条得到结果集，第二条计数，而从上文我们知道，第二条语句显然是有问题的，所以在使用`gorm`的时候，我们应该这样写
+
+```go
+var assets []AssetInfo
+var count int64
+err := m.db.Limit(size).Offset(offset).Find(&assets).Error
+m.db.Count(&count)
+```
 
 
 
